@@ -1,0 +1,8 @@
+name = "MatrixFunDiff"
+uuid = "1367b465-6b88-4844-8246-df11f62e2d3d"
+authors = ["xquan818 <840169780@qq.com>"]
+version = "0.1.0"
+
+[deps]
+ForwardDiff = "f6369f11-7733-5829-9624-2563aa707210"
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
