@@ -38,26 +38,26 @@ function get_swappings(split_map::Vector{Int})
 	end
 
     if count1 == N
-		return nothing, nothing, block_pos
-	end
-
-    # Find the swap strategy for the remaining clusters,
-    # that converts an unordered sequence to a decreasing order sequence. 
-    count2 = N - count1
-	@. block_pos += count2
-    sp2 = sortperm(split_map)
-    sort_map2 = split_map[sp2]
-    cl2(x) = searchsorted(sort_map2, x)
-    reord = cl2.(unique(sort_map2[1:findlast(x -> x ≤ N, sort_map2)]))
-	@views for iro in reord
-        count2 -= length(iro)
-		irosp = sp2[iro]
-		for (i, il) in enumerate(irosp)
-			 irosp[i] += sum(x->x<split_map[il], split_map[il+1:end]; init=0)
+        sp2, reord = nothing, nothing
+	else
+		# Find the swap strategy for the remaining clusters,
+		# that converts an unordered sequence to a decreasing order sequence. 
+		count2 = N - count1
+		@. block_pos += count2
+		sp2 = sortperm(split_map)
+		sort_map2 = split_map[sp2]
+		cl2(x) = searchsorted(sort_map2, x)
+		reord = cl2.(unique(sort_map2[1:findlast(x -> x ≤ N, sort_map2)]))
+		@views for iro in reord
+			count2 -= length(iro)
+			irosp = sp2[iro]
+			for (i, il) in enumerate(irosp)
+				irosp[i] += sum(x->x<split_map[il], split_map[il+1:end]; init=0)
+			end
+			pushfirst!(block_pos, count2)
 		end
-		pushfirst!(block_pos, count2)
+		@assert iszero(count2)
 	end
-	@assert iszero(count2)
 
     block = [block_pos[i]+1:block_pos[i+1] for i = 1:length(block_pos)-1]
 
