@@ -4,9 +4,9 @@ function reorder_schur(S::Schur, asgmt)
 	select = zeros(Bool, length(asgmt))
 	if !isnothing(rerng) 
 		for irr in rerng
-			@. select = 0
+            fill!(select, 0)
 			@views irrsp = resp[irr]
-			@. select[irrsp] = 1
+			fill!(select[irrsp], 1)
 			ordschur!(S, select)
 		end
 	end
@@ -30,16 +30,16 @@ function get_swappings(asgmt::Vector{Int})
         li = length(cl_i)
         if li == 1 || (maximum(cl_i) - minimum(cl_i)) == (li- 1)
 			count1 += li
-            @. asgmt[cl_i] = N + 1
+            fill!(asgmt[cl_i], N+1)
             push!(pos, count1)
 		end
 	end
 
+    # Find the swap strategy for the remaining clusters,
+    # that converts an unordered sequence to a decreasing order sequence. 
     if count1 == N
         resp, rerng = nothing, nothing
 	else
-		# Find the swap strategy for the remaining clusters,
-		# that converts an unordered sequence to a decreasing order sequence. 
 		count2 = N - count1
 		@. pos += count2
 		resp = sortperm(asgmt)

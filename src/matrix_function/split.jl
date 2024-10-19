@@ -5,36 +5,44 @@ Return the splitting cluster assignments vector z (z_i is the index of the split
 """
 function get_splittings(f::Function, pts::Vector{T}; 
 						sep=0.1, color::Function=(x->1),
-                        isnative=native(f),
+                        checknative=native(f),
                         kwargs...) where {T<:Number}	
     # Split the points by `color`.
     asgmt = color.(pts)
     @assert eltype(asgmt) <: Integer
     clsp, clrng = split_cluster(asgmt)
 
-	if isnothing(clrng)
-        # Each point has a different color
+    # Each point has a different color
+    if isnothing(clrng)
         @. asgmt = 1:length(pts)
-	else
-        # Split each cluster by separation 
-        min_ind = 1
-        @views for ir in clrng
-            cl_i = clsp[ir]
-			pts_i = pts[cl_i]
-            asg_i = _get_splittings(pts_i, sep, min_ind, isnative; kwargs...)
-			asgmt[cl_i] = asg_i
-            min_ind = maximum(asg_i) + 1
-        end
-	end
+        return asgmt
+    end
 
-	asgmt
+    if isinf(sep)
+        @views for (i, ir) in enumerate(clrng)
+            fill!(asgmt[clsp[ir]], i)
+        end
+        return asgmt
+    end
+
+    # Split each color cluster by separation 
+    min_ind = 1
+    @views for ir in clrng
+        cl_i = clsp[ir]
+        pts_i = pts[cl_i]
+        asg_i = _get_splittings(pts_i, sep, min_ind, checknative; kwargs...)
+        asgmt[cl_i] = asg_i
+        min_ind = maximum(asg_i) + 1
+    end
+
+    return asgmt
 end
 
 # Repeatedly split the clusters by separation (halving the value at each iteration) 
 # until the spread of subcluster meets the criteria 
 function _get_splittings(pts::AbstractVector{T},
 						 δ::Real, min_ind::Int,
-                         isnative::Bool;
+                         checknative::Bool;
                          max_deg::Int=100,
 						 scale::Real=1.0, 
 						 ε=eps(real(T))) where {T<:Number}
@@ -50,15 +58,8 @@ function _get_splittings(pts::AbstractVector{T},
             cl_i = clsp[ir]
             pts_i = pts[cl_i]
             spread_i = get_spread(pts_i)
-
-            splitting = false
-            if isnative
-                (spread_i > scale) && (splitting = true)
-            elseif (spread_i/scale)^(max_deg+1) > ε/δ
-                splitting = true
-            end
-
-            asg_i = splitting ? _get_splittings(pts_i, δ/2, min_ind, isnative;
+            can_split = checkspread(spread_i, scale, Val(checknative); max_deg, tol=ε/δ)
+            asg_i = can_split ? _get_splittings(pts_i, δ/2, min_ind, checknative;
                 				                max_deg, scale, ε) :
                     			asgmt[cl_i] .+ (min_ind - minimum(asgmt[cl_i]))
             asgmt[cl_i] = asg_i
@@ -110,7 +111,7 @@ function split_by_sep(pts::AbstractVector{<:Real}, δ::Real)
     for i = 1:nr
         ir = pos[i]+1:pos[i+1]
         rng[i] = ir
-        @. asgmt[ir] = l
+        fill!(asgmt[ir], l)
         l += 1
     end
 
@@ -170,3 +171,8 @@ end
 get_spread(pts::AbstractVector{<:Real}) = maximum(pts) - minimum(pts)
 get_spread(pts::AbstractVector{<:Complex}) = maximum(get_dist_mat(pts))
 get_spread(pts::T) where {T<:Number} = zero(real(T))
+
+function checkspread(spread, scale, ::Val{false}; max_deg, tol)
+    (spread / scale)^(max_deg + 1) > tol
+end
+checkspread(spread, scale, ::Val{true}; kwargs...) = spread > scale

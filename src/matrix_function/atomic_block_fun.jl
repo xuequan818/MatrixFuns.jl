@@ -43,8 +43,8 @@ end
 atomic_block_fun(f::Function, A::AbstractMatrix, ::Val{1}, max_deg) = dot_fun(f, A)
 
 function atomic_block_fun(f::Function, A::AbstractMatrix; 
-                          max_deg=100, isnative = native(f))
-    isnative ? f(A) : atomic_block_fun(f, A, Val(size(A,1)), max_deg)
+                          max_deg=100, checknative = native(f))
+    checknative ? f(A) : atomic_block_fun(f, A, Val(size(A,1)), max_deg)
 end
 
 @inline function taylor_coeffs(f::Function, x0::Number, order::Int)
