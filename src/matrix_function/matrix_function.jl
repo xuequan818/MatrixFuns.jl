@@ -68,7 +68,7 @@ function mat_fun(f::Function, A::AbstractMatrix{TT};
     # compute f(T)
     if maximum(split_map) == n
         F = parlett_recurrence(f, T, Λ)
-    elseif maximum(split_map) == 1
+    elseif allequal(split_map)
         F = atomic_block_fun(f, T; max_deg, isnative)
     else
         S, block = reorder_schur(S, split_map)

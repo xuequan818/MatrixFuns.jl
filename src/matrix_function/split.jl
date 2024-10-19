@@ -8,44 +8,45 @@ function get_splittings(f::Function, pts::Vector{T};
                         isnative=native(f),
                         kwargs...) where {T<:Number}	
     # Split the points by `color`.
-    clsp, clrg = split_cluster(color.(pts))
+    asgmt = color.(pts)
+    @assert eltype(asgmt) <: Integer
+    clsp, clrng = split_cluster(asgmt)
 
-	if isnothing(clrg)
-        # Each point has a different color 
-		split_map = collect(1:length(pts))
+	if isnothing(clrng)
+        # Each point has a different color
+        @. asgmt = 1:length(pts)
 	else
         # Split each cluster by separation 
-        min_map = 1
-		split_map = similar(pts, Int)
-        @views for ir in clrg
+        min_ind = 1
+        @views for ir in clrng
             cl_i = clsp[ir]
 			pts_i = pts[cl_i]
-            map_i = _get_splittings(pts_i, sep, min_map, isnative; kwargs...)
-			split_map[cl_i] = map_i
-            min_map = maximum(map_i) + 1
+            asg_i = _get_splittings(pts_i, sep, min_ind, isnative; kwargs...)
+			asgmt[cl_i] = asg_i
+            min_ind = maximum(asg_i) + 1
         end
 	end
 
-	split_map
+	asgmt
 end
 
 # Repeatedly split the clusters by separation (halving the value at each iteration) 
 # until the spread of subcluster meets the criteria 
 function _get_splittings(pts::AbstractVector{T},
-						 δ::Real, min_map::Int,
+						 δ::Real, min_ind::Int,
                          isnative::Bool;
                          max_deg::Int=100,
 						 scale::Real=1.0, 
 						 ε=eps(real(T))) where {T<:Number}
     if length(pts) == 1
-        return [min_map]
+        return [min_ind]
     end
 
-    split_map, clsp, clrg = split_by_sep(pts, δ)
-    @. split_map += (min_map - 1)
+    asgmt, clsp, clrng = split_by_sep(pts, δ)
+    @. asgmt += (min_ind - 1)
 
-    if !isnothing(clrg)
-        @views for ir in clrg
+    if !isnothing(clrng)
+        @views for ir in clrng
             cl_i = clsp[ir]
             pts_i = pts[cl_i]
             spread_i = get_spread(pts_i)
@@ -57,30 +58,32 @@ function _get_splittings(pts::AbstractVector{T},
                 splitting = true
             end
 
-            map_i = splitting ? _get_splittings(pts_i, δ/2, min_map, isnative;
-                				max_deg, scale, ε) :
-                    			split_map[cl_i] .+ (min_map - minimum(split_map[cl_i]))
-            split_map[cl_i] = map_i
-            min_map = maximum(map_i) + 1
+            asg_i = splitting ? _get_splittings(pts_i, δ/2, min_ind, isnative;
+                				                max_deg, scale, ε) :
+                    			asgmt[cl_i] .+ (min_ind - minimum(asgmt[cl_i]))
+            asgmt[cl_i] = asg_i
+            min_ind = maximum(asg_i) + 1
         end
     end
 
-    return split_map
+    return asgmt
 end
 
 # Split the same mapping index into one cluster
-function split_cluster(index::AbstractVector{T}) where {T<:Integer}
-    N = length(index)
+function split_cluster(asgmt::AbstractVector{T}; rngsort=true) where {T<:Integer}
+    N = length(asgmt)
 
-    if (minimum(index) == 1 && maximum(index) == N) || unique(index) == index
+    if (minimum(asgmt) == 1 && maximum(asgmt) == N) || allunique(asgmt)
         return nothing, nothing
     end
 	
-    sp = sortperm(index)
-    index_sort = index[sp]
-    cl(x) = searchsorted(index_sort, x)
+    sp = sortperm(asgmt)
+    asgmt_sort = asgmt[sp]
+    searchclust(x) = searchsorted(asgmt_sort, x)
+    rng = rngsort ? searchclust.(unique(asgmt_sort)) :
+                    searchclust.(unique(asgmt))
 
-    return sp, cl.(unique(index_sort))
+    return sp, rng
 end
 
 # Real points
@@ -99,26 +102,26 @@ function split_by_sep(pts::AbstractVector{<:Real}, δ::Real)
         return ones(Int, N), sp, [1:N]
 	end 
 
-    split_pos = vcat(0, findall(x -> x > δ, dist), N) # find all split positions
-    split_map = similar(pts, Int)
-    nr = length(split_pos) - 1
-    split_range = Vector{UnitRange{Int64}}(undef, nr)
+    pos = vcat(0, findall(x -> x > δ, dist), N) # find all split positions
+    asgmt = similar(pts, Int)
+    nr = length(pos) - 1
+    rng = Vector{UnitRange{Int64}}(undef, nr)
     l = 1
     for i = 1:nr
-        ir = split_pos[i]+1:split_pos[i+1]
-        split_range[i] = ir
-        @. split_map[ir] = l
+        ir = pos[i]+1:pos[i+1]
+        rng[i] = ir
+        @. asgmt[ir] = l
         l += 1
     end
 
-    return split_map[sortperm(sp)], sp, split_range
+    return asgmt[sortperm(sp)], sp, rng
 end
 
 function get_dist_vec(pts::AbstractVector{<:Real})
     # Sort the eigenvalues to quickly calculate distance
     sp = sortperm(pts; rev=true) # real pts
     pts_sp = pts[sp]
-    dist = pts_sp[1:end-1] - pts_sp[2:end]
+    @views dist = pts_sp[1:end-1] - pts_sp[2:end]
 
     return dist, sp
 end
@@ -141,10 +144,10 @@ function split_by_sep(pts::AbstractVector{<:Complex}, δ::Real)
     end
 
     R = hclust(dist, linkage=:single, uplo=:U)
-    split_map = cutree(R, h=δ)
-    sp, split_range = split_cluster(split_map)
+    asgmt = cutree(R, h=δ)
+    sp, rng = split_cluster(asgmt)
 
-    return split_map, sp, split_range
+    return asgmt, sp, rng
 end
 
 function get_dist_mat(pts::AbstractVector{<:Number})
