@@ -3,11 +3,12 @@
 
 # Implement the standard Parlett recurrence (Algorithm 4.2).
 # This is for the case where all eigenvalues are separated from each other.
-function parlett_recurrence(f::Function, T::AbstractMatrix, Λ)
+function parlett_recurrence(f::Function, T::AbstractMatrix)
     @assert istriu(T)
     n = size(T, 1)
 
-    F = diagm(dot_fun(f, Λ))
+    Λ = diag(T)
+    F = diagm(dot_fun!(f, Λ, Λ))
     for j = 2:n, i = j-1:-1:1
         Y = T[i, j] * (F[i, i] - F[j, j]) 
         for k = i+1:j-1
@@ -22,29 +23,38 @@ end
 # Implement the block Parlett recurrence (Algorithm 4.3).
 # This is for the case where there are eigenvalues are close.
 function block_parlett_recurrence(f::Function, T::AbstractMatrix,
-   	 							  block::Vector{UnitRange{Int}}; 
-								  kwargs...)
+    block::Vector{UnitRange{Int}};
+    kwargs...)
     @assert istriu(T)
-	
+
     F = fill!(similar(T, typeof(f(T[1]))), 0)
     @views for (j, jb) in enumerate(block)
         Tjj = T[jb, jb]
-        F[jb, jb] = atomic_block_fun(f, Tjj; kwargs...)
+        Fjj = F[jb, jb]
+        atomic_block_fun!(f, Fjj, Tjj; kwargs...)
         for i = j-1:-1:1
             ib = block[i]
             Tii = T[ib, ib]
-            F[ib, ib] = atomic_block_fun(f, Tii; kwargs...)
-            Y = F[ib, ib] * T[ib, jb] - T[ib, jb] * F[jb, jb]
+            Fii = F[ib, ib]
+            atomic_block_fun!(f, Fii, Tii; kwargs...)
+            # Fij = Fii*Tij - Tij*Fjj
+            Tij = T[ib, jb]
+            Fij = F[ib, jb]
+            mul!(Fij, Fii, Tij)
+            mul!(Fij, Tij, Fjj, -1, true)
+            # Fij = Fij + (Fik*Tkj - Tik*Fkj)
             for k = i+1:j-1
                 kb = block[k]
-                Y += (F[ib, kb] * T[kb, jb] - T[ib, kb] * F[kb, jb])
+                mul!(Fij, F[ib, kb], T[kb, jb], 1, true)
+                mul!(Fij, T[ib, kb], F[kb, jb], -1, true)
             end
 
-            # solve Tii*Fij + Fij*(-Tjj) + (-Y) = 0
+            # solve Tii*Fij - Fij*Tjj = Y
             if length(ib) == 1 && length(jb) == 1
-                F[ib, jb] = Y ./ (Tii - Tjj)
+                rdiv!(Fij, Tii[1] - Tjj[1])
             else
-                F[ib, jb] = sylvester(Tii, -Tjj, -Y)
+                _, scale = LAPACK.trsyl!('N', 'N', Tii, Tjj, Fij, -1)
+                rdiv!(Fij, scale)
             end
         end
     end

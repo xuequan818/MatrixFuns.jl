@@ -39,7 +39,7 @@ function mat_fun(f::Function, A::AbstractMatrix{TT};
                  ε=eps(real(TT)), checknative=native(f)) where {TT<:Number}      
     n = checksquare(A)
     if isone(n)
-        return dot_fun!(f,A)
+        return dot_fun!(f, A, A)
     end
     
     if ishermitian(A)
@@ -68,7 +68,7 @@ function mat_fun(f::Function, A::AbstractMatrix{TT};
     
     # compute f(T)
     if maximum(split_map) == n
-        F = parlett_recurrence(f, T, Λ)
+        F = parlett_recurrence(f, T)
     elseif allequal(split_map)
         F = atomic_block_fun(f, T; max_deg, checknative)
     else
@@ -76,10 +76,14 @@ function mat_fun(f::Function, A::AbstractMatrix{TT};
         F = block_parlett_recurrence(f, S.T, block; max_deg, checknative)
     end
 
-    return S.Z * F * S.Z'
+    FA = S.Z * F * S.Z'
+    if eltype(S) <: Complex && norm(imag.(FA), Inf) < cbrt(ε)^2
+        FA = real.(FA)
+    end
+    return FA
 end
 
-diag_mat_fun(f::Function, Λ, P) = P * Diagonal(dot_fun!(f, Λ)) * P'
+diag_mat_fun(f::Function, Λ, P) = P * Diagonal(dot_fun!(f, Λ, Λ)) * P'
 
 # Check `f` is a Julia native function
 const NATIVE_TEST_MAT = SDiagonal{2}(I)

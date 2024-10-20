@@ -1,6 +1,7 @@
 
-function atomic_block_fun(f::Function, A::AbstractMatrix, ::Val{N},
-                          max_deg::Int) where {N}
+function atomic_block_fun!(f::Function, F::AbstractMatrix,
+                           A::AbstractMatrix, ::Val{N},
+                           max_deg::Int) where {N}
     @assert istriu(A)
 
     n = size(A, 1)
@@ -9,12 +10,16 @@ function atomic_block_fun(f::Function, A::AbstractMatrix, ::Val{N},
     σ = sum(Λ) / n
     M = copy(A - σ * I)
     
+    # compute μ = ‖y‖_∞, where y solves (I - |N|)y = e 
+    # and N is the strictly upper triangular of A
     triu!(A, 1)
-    @. A = abs(A)
-    μ = norm((I - A) \ ones(n), Inf)
+    @. A = -abs(A)
+    mul!(A, 1, I, true, true)
+    y = LAPACK.trtrs!('U', 'N', 'N', A, ones(n))
+    μ = norm(y, Inf)
 
     ft = taylor_coeffs(f, σ, max_deg)
-    F = ft[1] * Matrix{eltype(A)}(I, n, n)
+    copyto!(F, ft[1]*I)
     P0 = copy(M)
     P1 = similar(M)
     for s = 1:max_deg
@@ -40,12 +45,23 @@ function atomic_block_fun(f::Function, A::AbstractMatrix, ::Val{N},
 
     return F
 end
-atomic_block_fun(f::Function, A::AbstractMatrix, ::Val{1}, max_deg) = dot_fun(f, A)
 
-function atomic_block_fun(f::Function, A::AbstractMatrix; 
-                          max_deg=100, checknative = native(f))
-    checknative ? f(A) : atomic_block_fun(f, A, Val(size(A,1)), max_deg)
+function atomic_block_fun!(f::Function, F::AbstractMatrix,
+                           A::AbstractMatrix, ::Val{1}, max_deg)
+    dot_fun!(f, F, A)
 end
+
+function atomic_block_fun!(f::Function, F::AbstractMatrix, 
+                           A::AbstractMatrix; max_deg=100,
+                           checknative=native(f))
+    if checknative
+        copy!(F, f(A))
+    else
+        atomic_block_fun!(f, F, A, Val(size(A,1)), max_deg)               
+    end
+    F
+end
+atomic_block_fun(f, A; kwargs...) = atomic_block_fun!(f, copy(A), A; kwargs...)
 
 @inline function taylor_coeffs(f::Function, x0::Number, order::Int)
 	try
@@ -92,15 +108,16 @@ end
 @inline facm2n(x, n, m) = exp(log(x) - logfactorial(m) + logfactorial(n))
 
 # Compute f.(A)
-function dot_fun!(f::Function, A::AbstractArray)
+function dot_fun!(f::Function, F::AbstractArray, A::AbstractArray)
+    @assert size(F) == size(A)
     try
-        @. A = f(A)
+        @. F = f(A)
     catch e
         if isa(e, DomainError)
-            @. A = f(complex(A))
+            @. F = f(complex(A))
         else
             throw(e)
         end
     end
 end
-dot_fun(f, A) = dot_fun!(f, copy(A))
+dot_fun(f, A) = dot_fun!(f, copy(A), A)
