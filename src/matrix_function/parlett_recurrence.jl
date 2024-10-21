@@ -8,17 +8,21 @@ function parlett_recurrence(f::Function, T::AbstractMatrix)
     n = size(T, 1)
 
     Λ = diag(T)
-    F = diagm(dot_fun!(f, Λ, Λ))
-    for j = 2:n, i = j-1:-1:1
-        Y = T[i, j] * (F[i, i] - F[j, j]) 
-        for k = i+1:j-1
-            Y += (F[i, k] * T[k, j] - T[i, k] * F[k, j])
-        end
+    F = diagm(elem_fun!(f, Λ, Λ))
+    @views for j = 2:n, i = j-1:-1:1
+        # TODO: increase numerical stability
+        k = i+1:j-1
+        Y = T[i, j] * (F[i, i] - F[j, j]) + 
+            (dot_noconj(F[i, k], T[k, j]) - dot_noconj(T[i, k], F[k, j]))
         F[i, j] = Y / (T[i, i] - T[j, j])
     end
  
     return F
 end
+
+dot_noconj(x::AbstractVector{T}, y::AbstractVector{T}) where {T<:Real} = dot(x,y)
+dot_noconj(x::AbstractVector{T}, y::AbstractVector{T}) where {T<:Complex} = BLAS.dotu(x, y)
+dot_noconj(x::Number, y::Number) = x*y
 
 # Implement the block Parlett recurrence (Algorithm 4.3).
 # This is for the case where there are eigenvalues are close.

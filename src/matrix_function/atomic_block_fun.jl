@@ -1,4 +1,4 @@
-
+# Implement the atomic block evaluation(Algorithm 4.4).
 function atomic_block_fun!(f::Function, F::AbstractMatrix,
                            A::AbstractMatrix, ::Val{N},
                            max_deg::Int) where {N}
@@ -19,14 +19,17 @@ function atomic_block_fun!(f::Function, F::AbstractMatrix,
     μ = norm(y, Inf)
 
     ft = taylor_coeffs(f, σ, max_deg)
+    max_iter = findlast(!iszero, ft) - 1
     copyto!(F, ft[1]*I)
     P0 = copy(M)
     P1 = similar(M)
-    for s = 1:max_deg
+    for s = 1:max_iter
         mul!(F, ft[s+1], P0, true, true) # F += ft[s] * P0
         normF = norm(F, Inf)
         mul!(P1, P0, M)
-        if abs(ft[s+1]) * norm(P0, Inf) ≤ tol * normF # check convergence
+
+        # check convergence
+        if abs(ft[s+1]) * norm(P0, Inf) ≤ tol * normF
             # Δ = max_{λ} max_{0≤r≤n-1} |f^{(s+r)} (λ)| / r!
             #   = max_{λ} max_{0≤r≤n-1} (|f^{(s+r)} (λ)| / (s+r)!) * ((s+r)!/r!)
             Δ = 0.0
@@ -40,6 +43,7 @@ function atomic_block_fun!(f::Function, F::AbstractMatrix,
             end
             μ * Δ * norm(P1, Inf) ≤ tol * normF && break
         end
+        
         copy!(P0, P1)
     end
 
@@ -48,7 +52,7 @@ end
 
 function atomic_block_fun!(f::Function, F::AbstractMatrix,
                            A::AbstractMatrix, ::Val{1}, max_deg)
-    dot_fun!(f, F, A)
+    elem_fun!(f, F, A)
 end
 
 function atomic_block_fun!(f::Function, F::AbstractMatrix, 
@@ -100,7 +104,7 @@ end
 
 @inline function coef_by_arb(f::Function, x0::Number, order::Int)
     farb = f(ArbSeries((x0, 1), degree=order))
-    T = typeof(x0)
+    T = float(typeof(x0))
     c = map(i->convert(T, farb[i]), 0:order)
 end
 
@@ -108,7 +112,7 @@ end
 @inline facm2n(x, n, m) = exp(log(x) - logfactorial(m) + logfactorial(n))
 
 # Compute f.(A)
-function dot_fun!(f::Function, F::AbstractArray, A::AbstractArray)
+function elem_fun!(f::Function, F::AbstractArray, A::AbstractArray)
     @assert size(F) == size(A)
     try
         @. F = f(A)
@@ -120,4 +124,4 @@ function dot_fun!(f::Function, F::AbstractArray, A::AbstractArray)
         end
     end
 end
-dot_fun(f, A) = dot_fun!(f, copy(A), A)
+elem_fun(f, A) = elem_fun!(f, copy(A), A)

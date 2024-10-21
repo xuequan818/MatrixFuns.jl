@@ -108,7 +108,7 @@ function split_by_sep(pts::AbstractVector{<:Real}, δ::Real)
     nr = length(pos) - 1
     rng = Vector{UnitRange{Int64}}(undef, nr)
     l = 1
-    for i = 1:nr
+    @views for i = 1:nr
         ir = pos[i]+1:pos[i+1]
         rng[i] = ir
         fill!(asgmt[ir], l)

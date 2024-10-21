@@ -39,7 +39,7 @@ function mat_fun(f::Function, A::AbstractMatrix{TT};
                  ε=eps(real(TT)), checknative=native(f)) where {TT<:Number}      
     n = checksquare(A)
     if isone(n)
-        return dot_fun!(f, A, A)
+        return elem_fun!(f, A, A)
     end
     
     if ishermitian(A)
@@ -65,7 +65,7 @@ function mat_fun(f::Function, A::AbstractMatrix{TT};
 
     # split the eigenvalues into clusters
     split_map = get_splittings(f, Λ; sep, max_deg, scale, color, ε, checknative)
-    
+
     # compute f(T)
     if maximum(split_map) == n
         F = parlett_recurrence(f, T)
@@ -76,14 +76,10 @@ function mat_fun(f::Function, A::AbstractMatrix{TT};
         F = block_parlett_recurrence(f, S.T, block; max_deg, checknative)
     end
 
-    FA = S.Z * F * S.Z'
-    if eltype(S) <: Complex && norm(imag.(FA), Inf) < cbrt(ε)^2
-        FA = real.(FA)
-    end
-    return FA
+    return S.Z * F * S.Z'
 end
 
-diag_mat_fun(f::Function, Λ, P) = P * Diagonal(dot_fun!(f, Λ, Λ)) * P'
+diag_mat_fun(f::Function, Λ, P) = P * Diagonal(elem_fun!(f, Λ, Λ)) * P'
 
 # Check `f` is a Julia native function
 const NATIVE_TEST_MAT = SDiagonal{2}(I)

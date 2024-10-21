@@ -3,9 +3,9 @@ function reorder_schur(S::Schur, asgmt)
 
 	select = zeros(Bool, length(asgmt))
 	if !isnothing(rerng) 
-		for irr in rerng
+		@views for irr in rerng
             fill!(select, 0)
-			@views irrsp = resp[irr]
+			irrsp = resp[irr]
 			fill!(select[irrsp], 1)
 			ordschur!(S, select)
 		end
