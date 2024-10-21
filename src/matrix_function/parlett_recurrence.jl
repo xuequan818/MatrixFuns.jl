@@ -13,14 +13,14 @@ function parlett_recurrence(f::Function, T::AbstractMatrix)
         # TODO: increase numerical stability
         k = i+1:j-1
         Y = T[i, j] * (F[i, i] - F[j, j]) + 
-            (dot_noconj(F[i, k], T[k, j]) - dot_noconj(T[i, k], F[k, j]))
+            (dot_noconj(T[k, j], F[i, k]) - dot_noconj(T[i, k], F[k, j]))
         F[i, j] = Y / (T[i, i] - T[j, j])
     end
  
     return F
 end
 
-dot_noconj(x::AbstractVector{T}, y::AbstractVector{T}) where {T<:Real} = dot(x,y)
+dot_noconj(x::AbstractVector{T}, y::AbstractVector) where {T<:Real} = dot(x,y)
 dot_noconj(x::AbstractVector{T}, y::AbstractVector{T}) where {T<:Complex} = BLAS.dotu(x, y)
 dot_noconj(x::Number, y::Number) = x*y
 
