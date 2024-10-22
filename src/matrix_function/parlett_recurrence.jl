@@ -36,7 +36,6 @@ function block_parlett_recurrence(f::Function, T::AbstractMatrix,
         Tjj = T[jb, jb]
         Fjj = F[jb, jb]
         atomic_block_fun!(f, Fjj, Tjj; kwargs...)
-        # TODO: numerical stability is very worse for a large number of blocks
         for i = j-1:-1:1
             ib = block[i]
             Tii = T[ib, ib]
@@ -47,7 +46,6 @@ function block_parlett_recurrence(f::Function, T::AbstractMatrix,
             mul!(Fij, Fii, Tij)
             mul!(Fij, Tij, Fjj, -1, true)
             # Fij = Fij + (Fik*Tkj - Tik*Fkj)
-            # TODO: Accumulation can cause unstability
             for k = i+1:j-1
                 kb = block[k]
                 mul!(Fij, F[ib, kb], T[kb, jb], 1, true)
@@ -58,9 +56,6 @@ function block_parlett_recurrence(f::Function, T::AbstractMatrix,
             if length(ib) == 1 && length(jb) == 1
                 rdiv!(Fij, Tii[1] - Tjj[1])
             else
-                # TODO: The `sylvester` is very sensitive to `Y`, 
-                #       and very small errors can lead to 
-                #       large differences in solutions.
                 _, scale = LAPACK.trsyl!('N', 'N', Tii, Tjj, Fij, -1)
                 rdiv!(Fij, scale)
             end

@@ -43,9 +43,11 @@ end
 
 # compute μ = ‖y‖_∞, where y solves (I - |N|)y = e 
 # and N is the strictly upper triangular of A
-function compute_μ(A; n=size(A,1))
+function compute_μ(A::AbstractMatrix{TT}; n=size(A,1)) where {TT}
+    T = real(TT)
     As = triu(A, 1)
     @. As = -abs(As)
+    As = convert(Matrix{T}, As)
     mul!(As, 1, I, true, true)
     y = LAPACK.trtrs!('U', 'N', 'N', As, ones(n))
     μ = norm(y, Inf)
@@ -58,8 +60,7 @@ function compute_Δ(f::Function, Λ::AbstractVector, s, n, m=10)
     dfmat = zeros(T, n+m, length(Λ))
     # compute th taylor coefficients
     @views for (i, λi) in enumerate(Λ)
-        dfmat[:, i] = taylor_coeffs(exp, λi, s+m+n, s+1)
-        @. dfmat[:, i] = abs(dfmat[:, i])
+        dfmat[:, i] = abs.(taylor_coeffs(exp, λi, s+m+n, s+1))
     end
     # normalization
     @views for r = 0:n+m-1

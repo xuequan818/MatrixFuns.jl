@@ -57,9 +57,7 @@ function _get_splittings(pts::AbstractVector{T},
         @views for ir in clrng
             cl_i = clsp[ir]
             pts_i = pts[cl_i]
-            spread_i = get_spread(pts_i)
-            can_split = checkspread(spread_i, scale, Val(checknative); max_deg, tol=ε / δ)
-            
+            can_split = checkspread(pts_i, scale, Val(checknative), max_deg, ε / δ)
             asg_i = can_split ? _get_splittings(pts_i, δ/2, min_ind, checknative;
                 				                max_deg, scale, ε) :
                     			asgmt[cl_i] .+ (min_ind - minimum(asgmt[cl_i]))
@@ -173,7 +171,12 @@ get_spread(pts::AbstractVector{<:Real}) = maximum(pts) - minimum(pts)
 get_spread(pts::AbstractVector{<:Complex}) = maximum(get_dist_mat(pts))
 get_spread(pts::T) where {T<:Number} = zero(real(T))
 
-function checkspread(spread, scale, ::Val{false}; max_deg, tol)
+function checkspread(pts::AbstractVector, scale, isnative,max_deg, tol)
+    isinf(scale) && return false
+    spread = get_spread(pts)
+    checkspread(spread, scale, isnative, max_deg, tol)
+end
+function checkspread(spread::Real, scale, ::Val{false}, max_deg, tol)
     (spread / scale)^(max_deg + 1) > tol
 end
-checkspread(spread, scale, ::Val{true}; kwargs...) = spread > scale
+checkspread(spread::Real, scale, ::Val{true}, max_deg, tol) = spread > scale
