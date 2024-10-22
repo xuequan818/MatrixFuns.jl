@@ -10,7 +10,7 @@ Return the n-th order Fréchet derivative `d^nf(H)h[1]…h[n]`, assuming `f` is 
     N = length(eigs)
     order = length(h)
     DD_F = DD_tensor(f, eigs, order; kwargs...)
-    h = map(x -> inv(Ψ) * x * Ψ, h)
+    map!(x -> inv(Ψ) * x * Ψ, h, h)
 
     # F_1 =  h_1 ∘ Λ^{0,1}
     if order == 1
@@ -72,7 +72,7 @@ end
 # Generate the divided difference tensor 
 # DD_F = f[λ_i0, λ_i2, ..., λ_in]
 # By the permutation symmetry of the divided difference, 
-# we just calculate the irreducible vals
+# only need to calculate the irreducible vals
 function DD_tensor(f::Function, eigs::Vector{T}, 
                    order::Integer; kwargs...) where {T}
     N = length(eigs)

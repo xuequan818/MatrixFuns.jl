@@ -1,3 +1,4 @@
+# Reorder the Schur decomposition
 function reorder_schur(S::Schur, asgmt)
     resp, rerng, block = get_swappings(asgmt)
 

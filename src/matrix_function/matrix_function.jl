@@ -36,7 +36,8 @@ E.g., for the `sign` function, users can customize the color mapping using
 function mat_fun(f::Function, A::AbstractMatrix{TT};               
                  sep=0.1, max_deg=max(100,size(A,1)), 
                  scale=1.0, color::Function=(x->1), 
-                 ε=eps(real(TT)), checknative=native(f)) where {TT<:Number}      
+                 ε=eps(real(float((TT)))), 
+                 checknative=native(f)) where {TT<:Number}      
     n = checksquare(A)
     if isone(n)
         return elem_fun!(f, A, A)
@@ -65,7 +66,7 @@ function mat_fun(f::Function, A::AbstractMatrix{TT};
 
     # split the eigenvalues into clusters
     split_map = get_splittings(f, Λ; sep, max_deg, scale, color, ε, checknative)
-
+    
     # compute f(T)
     if maximum(split_map) == n
         F = parlett_recurrence(f, T)
