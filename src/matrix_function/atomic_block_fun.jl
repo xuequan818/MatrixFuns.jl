@@ -10,7 +10,11 @@ function atomic_block_fun!(f::Function, F::AbstractMatrix,
     σ = sum(Λ) / n
     M = copy(A - σ * I)
     ft = taylor_coeffs(f, σ, max_deg)
-    max_iter = findlast(!iszero, ft) - 1
+    if !isfinite(ft[end])
+        max_iter = findfirst(!isfinite, ft) - 2
+    else
+        max_iter = findlast(!iszero, ft) - 1
+    end
 
     copyto!(F, ft[1]*I)
     P0 = copy(M)
@@ -27,6 +31,7 @@ function atomic_block_fun!(f::Function, F::AbstractMatrix,
         # check convergence
         # TODO: Calculating higher order derivatives of all eigenvalues 
         #       is too expensive, can an efficient method be used?
+        #=
         if abs(ft[s+1]) * norm(P0, Inf) ≤ tol * normF
             if iszero(sflag)
                 Δs = compute_Δ(f, Λ, s, n, sext)
@@ -35,6 +40,8 @@ function atomic_block_fun!(f::Function, F::AbstractMatrix,
             sflag += 1
         end
         (sflag == sext+1) && (sflag = 0)
+        =#
+        @show (s,normF)
         copy!(P0, P1)
     end
 
