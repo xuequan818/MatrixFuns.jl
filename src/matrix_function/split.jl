@@ -7,8 +7,6 @@ function get_splittings(f::Function, pts::Vector{T};
 						sep=0.1, color::Function=(x->1),
                         checknative=native(f),
                         kwargs...) where {T<:Number}
-    @assert sep >= 0.01
-
     # Split the points by `color`.
     asgmt = color.(pts)
     @assert eltype(asgmt) <: Integer
@@ -59,13 +57,9 @@ function _get_splittings(pts::AbstractVector{T},
         @views for ir in clrng
             cl_i = clsp[ir]
             pts_i = pts[cl_i]
-            if δ < 0.01
-                can_split = false
-            else
-                spread_i = get_spread(pts_i)
-                can_split = checkspread(spread_i, scale, Val(checknative); max_deg, tol=ε/δ)
-            end
-            can_split=false
+            spread_i = get_spread(pts_i)
+            can_split = checkspread(spread_i, scale, Val(checknative); max_deg, tol=ε / δ)
+            
             asg_i = can_split ? _get_splittings(pts_i, δ/2, min_ind, checknative;
                 				                max_deg, scale, ε) :
                     			asgmt[cl_i] .+ (min_ind - minimum(asgmt[cl_i]))
