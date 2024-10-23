@@ -21,7 +21,7 @@ end
 function get_swappings(asgmt::Vector{Int})
 	N = length(asgmt)
 
-	# Filter out clusters with only one point and 
+	# Filter out clusters that only have one point and 
 	# clusters that are already aligned together to reduce swaps.
 	clsp, clrng = split_cluster(asgmt; rngsort=false)
 	pos = [0]

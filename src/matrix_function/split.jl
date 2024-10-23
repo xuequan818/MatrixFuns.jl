@@ -1,8 +1,5 @@
-"""
-    get_splittings(f, pts; sep, color, scale, max_deg, ε) -> Vector{Int}
-
-Return the splitting cluster assignments vector z (z_i is the index of the splitting cluster for the i-th data points (eigenvalues)). 
-"""
+# Construct the splitting cluster assignments vector z 
+# (z_i is the index of the splitting cluster for the i-th data points (eigenvalues)). 
 function get_splittings(f::Function, pts::Vector{T}; 
 						sep=0.1, color::Function=(x->1),
                         checknative=native(f),
@@ -52,6 +49,10 @@ function _get_splittings(pts::AbstractVector{T},
 
     asgmt, clsp, clrng = split_by_sep(pts, δ)
     @. asgmt += (min_ind - 1)
+    
+    if isinf(scale)
+        return asgmt
+    end
 
     if !isnothing(clrng)
         @views for ir in clrng
@@ -171,8 +172,7 @@ get_spread(pts::AbstractVector{<:Real}) = maximum(pts) - minimum(pts)
 get_spread(pts::AbstractVector{<:Complex}) = maximum(get_dist_mat(pts))
 get_spread(pts::T) where {T<:Number} = zero(real(T))
 
-function checkspread(pts::AbstractVector, scale, isnative,max_deg, tol)
-    isinf(scale) && return false
+function checkspread(pts::AbstractVector, scale, isnative, max_deg, tol)
     spread = get_spread(pts)
     checkspread(spread, scale, isnative, max_deg, tol)
 end

@@ -22,7 +22,7 @@ When `sep=Inf`, the eigenvalues are only split by `color`.
 
 `tol_tay` the termination tolerance for evaluating the Taylor series of diagonal blocks.
 
-`scale` the scaling of the Talyor series error.
+`scale` the scaling of the Talyor series error, is used to control the spread of each splitting cluster. When `scale=Inf`, split the eigenvalues only once with `sep`.
 
 `color(x::Number)::Integer` an index mapping function. 
 This is to ensure all eigenvalues within a cluster have the same color index. 
