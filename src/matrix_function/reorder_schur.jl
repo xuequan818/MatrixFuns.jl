@@ -46,7 +46,7 @@ function get_swappings(asgmt::Vector{Int})
 		resp = sortperm(asgmt)
         reasgmt = asgmt[resp]
         searchreord(x) = searchsorted(reasgmt, x)
-        rerng = searchreord.(unique(reasgmt[1:findlast(x -> x ≤ N, reasgmt)]))
+        rerng = searchreord.(unique(reasgmt[1:findlast(x -> x≤N, reasgmt)]))
         @views for irr in rerng
 			count2 -= length(irr)
 			irrsp = resp[irr]

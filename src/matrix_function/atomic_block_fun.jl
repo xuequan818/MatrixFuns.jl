@@ -19,7 +19,7 @@ function atomic_block_fun!(f::Function, F::AbstractMatrix,
     P0 = copy(M)
     P1 = similar(M)
     sflag = 1
-    sext = round(Int,log(cbrt(eps()),tol)) * n
+    sext = max(1, ceil(Int,log(cbrt(eps(typeof(tol))),tol))) * n
     Δs = nothing
     μ = compute_μ(A; n)
     for s = 1:max_iter

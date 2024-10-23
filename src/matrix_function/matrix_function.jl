@@ -37,7 +37,7 @@ E.g., for the `sign` function, users can customize the color mapping using
 """
 function mat_fun(f::Function, A::AbstractMatrix{TT};               
                  sep=0.1, max_deg=250, 
-                 tol_tay=cbrt(eps())^2,
+                 tol_tay=cbrt(eps(real(float((TT)))))^2,
                  scale=1.0, color::Function=(x->1), 
                  ε=eps(real(float((TT)))), 
                  checknative=native(f)) where {TT<:Number}      
