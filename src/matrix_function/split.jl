@@ -43,7 +43,7 @@ end
 function _get_splittings(pts::AbstractVector{T},
 						 δ::Real, min_ind::Int,
                          checknative::Bool;
-                         max_deg::Int=100,
+                         max_deg::Int=250,
 						 scale::Real=1.0, 
 						 ε=eps(real(T))) where {T<:Number}
     if length(pts) == 1

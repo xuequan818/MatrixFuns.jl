@@ -4,6 +4,7 @@
 
 Return the n-th order Fréchet derivative `d^nf(H)h[1]…h[n]`, assuming `f` is called as `f(x)`.
 """
+# TODO: Profile
 @inline function mat_fun_frechet(f::Function, eigs::Vector{Float64},
                                  Ψ::AbstractMatrix, h::Vector{V}; 
                                  kwargs...) where {V<:AbstractMatrix}

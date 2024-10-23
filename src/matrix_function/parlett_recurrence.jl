@@ -27,8 +27,7 @@ dot_noconj(x::Number, y::Number) = x*y
 # Implement the block Parlett recurrence (Algorithm 4.3).
 # This is for the case where there are eigenvalues are close.
 function block_parlett_recurrence(f::Function, T::AbstractMatrix,
-    block::Vector{UnitRange{Int}};
-    kwargs...)
+                                  block::Vector{UnitRange{Int}}; kwargs...)                                
     @assert istriu(T)
 
     F = fill!(similar(T, typeof(f(T[1]))), 0)

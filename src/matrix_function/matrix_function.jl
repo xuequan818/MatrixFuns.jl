@@ -18,9 +18,11 @@ Compute the matrix-variable function `f(A)`. Return a matrix.
 Here cl_p is the cluster with index p.
 When `sep=Inf`, the eigenvalues are only split by `color`.
 
-`max_deg` the maximum taylor expansion order for the atomic blocks computation.
+`max_deg` the maximum Taylor series order for the diagonal blocks computation.
 
-`scale` the scaling of the talyor expansion error.
+`tol_tay` the termination tolerance for evaluating the Taylor series of diagonal blocks.
+
+`scale` the scaling of the Talyor series error.
 
 `color(x::Number)::Integer` an index mapping function. 
 This is to ensure all eigenvalues within a cluster have the same color index. 
@@ -34,7 +36,8 @@ E.g., for the `sign` function, users can customize the color mapping using
 `checknative` check `f` is a Julia native function.
 """
 function mat_fun(f::Function, A::AbstractMatrix{TT};               
-                 sep=0.1, max_deg=max(100,size(A,1)), 
+                 sep=0.1, max_deg=250, 
+                 tol_tay=cbrt(eps())^2,
                  scale=1.0, color::Function=(x->1), 
                  ε=eps(real(float((TT)))), 
                  checknative=native(f)) where {TT<:Number}      
@@ -74,7 +77,7 @@ function mat_fun(f::Function, A::AbstractMatrix{TT};
         F = atomic_block_fun(f, T; max_deg, checknative)
     else
         S, block = reorder_schur(S, split_map)
-        F = block_parlett_recurrence(f, S.T, block; max_deg, checknative)
+        F = block_parlett_recurrence(f, S.T, block; max_deg, tol_tay, checknative)
     end
 
     return S.Z * F * S.Z'
