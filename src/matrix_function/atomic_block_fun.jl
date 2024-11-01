@@ -7,7 +7,14 @@ function atomic_block_fun!(f::Function, F::AbstractMatrix,
     n = size(A, 1)
     Λ = diag(A)
     σ = sum(Λ) / n
-    M = copy(A - σ * I)
+
+    # If f(x) = c, f(A) = c*I
+    checkconstf, fσ = constant(f, σ)
+    if checkconstf
+        copyto!(F, fσ*I)
+        return F
+    end
+
     ft = taylor_coeffs(f, σ, max_deg)
     if !isfinite(ft[end])
         max_iter = findfirst(!isfinite, ft) - 2
@@ -16,6 +23,7 @@ function atomic_block_fun!(f::Function, F::AbstractMatrix,
     end
 
     copyto!(F, ft[1]*I)
+    M = copy(A - σ * I)
     P0 = copy(M)
     P1 = similar(M)
     sflag = 1
@@ -54,26 +62,31 @@ function atomic_block_fun!(f::Function, F::AbstractMatrix,
                            tol_tay=cbrt(eps())^2,
                            checknative=native(f))
     if checknative
-        copy!(F, f(A))
+        fA = f(A)
+        typeof(fA) <: Number ? copyto!(F, fA*I) : copy!(F, fA)
     else
         atomic_block_fun!(f, F, A, Val(size(A,1)), max_deg, tol_tay)               
     end
     F
 end
-atomic_block_fun(f, A; kwargs...) = atomic_block_fun!(f, copy(A), A; kwargs...)
+function atomic_block_fun(f, A; kwargs...) 
+    T = promote_type(eltype(A), typeof(f(A[1])))
+    F = fill!(similar(A,T), 0)
+    atomic_block_fun!(f, F, A; kwargs...)
+end
 
 # Compute Taylor coefficients of `f` at `x0` for orders from `ordl` to `ordr`. 
 @inline function taylor_coeffs(f::Function, x0::Number, ordr::Integer, ordl::Integer=0)
     @assert 0 ≤ ordl ≤ ordr
-	try
+    try
         ordr ≤ 500 ? coef_by_ts(f, x0, ordr, ordl) : coef_by_arb(f, x0, ordr, ordl)
-	catch e
-		if isa(e, MethodError)
+    catch e
+        if isa(e, MethodError)
             coef_by_arb(f, x0, ordr, ordl)
-		else
-			throw(e)
-		end
-	end
+        else
+            throw(e)
+        end
+    end
 end
 
 # ordl = 0
@@ -124,6 +137,18 @@ end
     c = map(i->convert(T, farb[i]), ordl:ordr)
 end
 
+# Check `f` is a constant function
+const TAYLOR0 = Taylor1(0)
+
+function constant(f, x)
+    try 
+        fx = f(x + TAYLOR0)
+        typeof(fx) <: Taylor1 ? (false, nothing) : (true, fx)
+    catch
+        (false, nothing)
+    end
+end
+
 # compute μ = ‖y‖_∞, where y solves (I - |N|)y = e 
 # and N is the strictly upper triangular of A
 function compute_μ(A::AbstractMatrix{TT}; n=size(A, 1)) where {TT}
@@ -131,7 +156,7 @@ function compute_μ(A::AbstractMatrix{TT}; n=size(A, 1)) where {TT}
     As = triu(A, 1)
     @. As = -abs(As)
     As = convert(Matrix{T}, As)
-    mul!(As, 1, I, true, true)
+    mul!(As, true, I, true, true)
     y = LAPACK.trtrs!('U', 'N', 'N', As, ones(n))
     μ = norm(y, Inf)
 end
@@ -169,10 +194,16 @@ function elem_fun!(f::Function, F::AbstractArray, A::AbstractArray)
         @. F = f(A)
     catch e
         if isa(e, DomainError)
+            (eltype(F) <: Complex) || (F = complex.(F))
             @. F = f(complex(A))
         else
             throw(e)
         end
     end
 end
-elem_fun(f, A) = elem_fun!(f, copy(A), A)
+
+function elem_fun(f, A)
+    T = promote_type(eltype(A), typeof(f(A[1])))
+    F = fill!(similar(A,T), 0)
+    elem_fun!(f, F, A)
+end

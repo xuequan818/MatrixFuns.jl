@@ -1,9 +1,14 @@
 # Construct the splitting cluster assignments vector z 
 # (z_i is the index of the splitting cluster for the i-th data points (eigenvalues)). 
-function get_splittings(f::Function, pts::Vector{T}; 
-						sep=0.1, color::Function=(x->1),
-                        checknative=native(f),
+function get_splittings(pts::Vector{T}; sep=0.1,
+						color::Function=(x->1),
+                        checknative=false,
                         kwargs...) where {T<:Number}
+    N = length(pts) 
+    if N == 1
+        return [1]
+    end
+
     # Split the points by `color`.
     asgmt = color.(pts)
     @assert eltype(asgmt) <: Integer
@@ -11,7 +16,7 @@ function get_splittings(f::Function, pts::Vector{T};
 
     # Each point has a different color
     if isnothing(clrng)
-        @. asgmt = 1:length(pts)
+        @. asgmt = 1:N
         return asgmt
     end
 
@@ -71,18 +76,17 @@ function _get_splittings(pts::AbstractVector{T},
 end
 
 # Split the same mapping index into one cluster
-function split_cluster(asgmt::AbstractVector{T}; rngsort=true) where {T<:Integer}
+function split_cluster(asgmt::AbstractVector{T}) where {T<:Integer}
     N = length(asgmt)
 
     if (minimum(asgmt) == 1 && maximum(asgmt) == N) || allunique(asgmt)
         return nothing, nothing
     end
-	
-    sp = sortperm(asgmt)
-    asgmt_sort = asgmt[sp]
+
+    sp = issorted(asgmt) ? collect(1:N) : sortperm(asgmt)
+    @views asgmt_sort = asgmt[sp]
     searchclust(x) = searchsorted(asgmt_sort, x)
-    rng = rngsort ? searchclust.(unique(asgmt_sort)) :
-                    searchclust.(unique(asgmt))
+    rng = searchclust.(unique(asgmt))         
 
     return sp, rng
 end
@@ -93,7 +97,7 @@ function split_by_sep(pts::AbstractVector{<:Real}, δ::Real)
     @assert N > 1
 
     # Sort the eigenvalues to quickly calculate distance
-    dist, sp = get_dist_vec(pts)
+    dist, sp, decrease = get_dist_vec(pts)
 
     if minimum(dist) > δ # All points are separated.
         return collect(1:N), nothing, nothing
@@ -114,17 +118,24 @@ function split_by_sep(pts::AbstractVector{<:Real}, δ::Real)
         fill!(asgmt[ir], l)
         l += 1
     end
+    decrease || (asgmt = asgmt[sortperm(sp)])
 
-    return asgmt[sortperm(sp)], sp, rng
+    return asgmt, sp, rng
 end
 
 function get_dist_vec(pts::AbstractVector{<:Real})
-    # Sort the eigenvalues to quickly calculate distance
-    sp = sortperm(pts; rev=true) # real pts
-    pts_sp = pts[sp]
-    @views dist = pts_sp[1:end-1] - pts_sp[2:end]
+    # Sort points in decreasing order to quickly calculate distances
+    if issorted(pts; rev=true)
+        sp = collect(1:length(pts))
+        decrease = true
+    else
+        sp = sortperm(pts; rev=true) 
+        decrease = false
+        pts = pts[sp]
+    end
+    @views dist = pts[1:end-1] - pts[2:end]
 
-    return dist, sp
+    return dist, sp, decrease
 end
 
 # Complex points
@@ -151,9 +162,11 @@ function split_by_sep(pts::AbstractVector{<:Complex}, δ::Real)
     return asgmt, sp, rng
 end
 
-function get_dist_mat(pts::AbstractVector{<:Number})
-    map(x -> norm(x[1] - x[2]), Iterators.product(pts, pts))
+function get_dist_mat(px::AbstractVector{T}, 
+                      py::AbstractVector{T}) where {T<:Number}
+    map(x -> norm(x[1] - x[2]), Iterators.product(px, py))
 end
+get_dist_mat(pts::AbstractVector{<:Number}) = get_dist_mat(pts, pts)
 
 # Keep the upper triangle of a matrix and 
 # let the other parts be `δ`, overwriting `M` in the process.

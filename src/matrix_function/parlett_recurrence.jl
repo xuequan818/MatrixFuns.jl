@@ -7,8 +7,7 @@ function parlett_recurrence(f::Function, T::AbstractMatrix)
     @assert istriu(T)
     n = size(T, 1)
 
-    Λ = diag(T)
-    F = diagm(elem_fun!(f, Λ, Λ))
+    F = diagm(elem_fun(f, diag(T)))
     @views for j = 2:n, i = j-1:-1:1
         # TODO: increase numerical stability
         k = i+1:j-1
@@ -30,7 +29,7 @@ function block_parlett_recurrence(f::Function, T::AbstractMatrix,
                                   block::Vector{UnitRange{Int}}; kwargs...)                                
     @assert istriu(T)
 
-    F = fill!(similar(T, typeof(f(T[1]))), 0)
+    F = fill!(similar(T, float(typeof(f(T[1])))), 0)
     @views for (j, jb) in enumerate(block)
         Tjj = T[jb, jb]
         Fjj = F[jb, jb]
@@ -39,19 +38,19 @@ function block_parlett_recurrence(f::Function, T::AbstractMatrix,
             ib = block[i]
             Tii = T[ib, ib]
             Fii = F[ib, ib]
-            # Fij = Fii*Tij - Tij*Fjj
+            # Y = Fii*Tij - Tij*Fjj
             Tij = T[ib, jb]
             Fij = F[ib, jb]
             mul!(Fij, Fii, Tij)
             mul!(Fij, Tij, Fjj, -1, true)
-            # Fij = Fij + (Fik*Tkj - Tik*Fkj)
+            # Y = Y + (Fik*Tkj - Tik*Fkj)
             for k = i+1:j-1
                 kb = block[k]
                 mul!(Fij, F[ib, kb], T[kb, jb], 1, true)
                 mul!(Fij, T[ib, kb], F[kb, jb], -1, true)
             end
 
-            # solve Tii*Fij - Fij*Tjj = Y
+            # solve the Sylvester equation Tii*Fij - Fij*Tjj = Y
             if length(ib) == 1 && length(jb) == 1
                 rdiv!(Fij, Tii[1] - Tjj[1])
             else

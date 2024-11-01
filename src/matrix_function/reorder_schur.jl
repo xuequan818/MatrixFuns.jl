@@ -23,13 +23,13 @@ function get_swappings(asgmt::Vector{Int})
 
 	# Filter out clusters that only have one point and 
 	# clusters that are already aligned together to reduce swaps.
-	clsp, clrng = split_cluster(asgmt; rngsort=false)
+	clsp, clrng = split_cluster(asgmt)
 	pos = [0]
 	count1 = 0
 	@views for ir in clrng
         cl_i = clsp[ir]
         li = length(cl_i)
-        if li == 1 || (maximum(cl_i) - minimum(cl_i)) == (li- 1)
+        if li == 1 || abs(cl_i[1]-cl_i[end]) == (li-1)
 			count1 += li
             fill!(asgmt[cl_i], N+1)
             push!(pos, count1)
@@ -43,7 +43,7 @@ function get_swappings(asgmt::Vector{Int})
 	else
 		count2 = N - count1
 		@. pos += count2
-		resp = sortperm(asgmt)
+		resp = issorted(asgmt) ? collect(1:N) : sortperm(asgmt)
         reasgmt = asgmt[resp]
         searchreord(x) = searchsorted(reasgmt, x)
         rerng = searchreord.(unique(reasgmt[1:findlast(x -> x≤N, reasgmt)]))
