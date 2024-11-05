@@ -32,7 +32,7 @@ end
 
 @testset "1/(1+exp(1000*x))" begin
     f(x) = 1 / (1 + exp(1000 * (x-2.5)))
-    color(x) = x < 0 ? 1 : 2
+    color(x) = (x-2.5) < 0 ? 1 : 2
     for i = 1:N
         x = X[1:i]
         dd_def = div_diff_def(f, x)

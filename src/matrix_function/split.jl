@@ -52,7 +52,7 @@ function _get_splittings(pts::AbstractVector{T},
         return [min_ind]
     end
 
-    asgmt, clsp, clrng = split_by_sep(pts, δ)
+    asgmt, clsp, clrng = split_by_sep(pts, δ) # asgmt[clsp[clrng[i]]] .== i
     @. asgmt += (min_ind - 1)
     
     if isinf(scale)

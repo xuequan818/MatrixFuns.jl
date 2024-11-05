@@ -21,7 +21,7 @@ const x, N = 0.1, 4
 end
 
 @testset "1/(1+exp(1000*x))" begin
-    f(x) = 1 / (1 + exp(1000 * (x - 2.5)))
+    f(x) = 1 / (1 + exp(1000 * x))
     color(x) = x < 0 ? 1 : 2
     for i = 1:N
         d = nth_derivative(f, x, i - 1)
