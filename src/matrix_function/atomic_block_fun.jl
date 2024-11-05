@@ -1,7 +1,7 @@
 ## Implement the atomic block evaluation(Algorithm 4.4).
 function atomic_block_fun!(f::Function, F::AbstractMatrix,
                            A::AbstractMatrix, ::Val{N},
-                           max_deg::Integer, tol) where {N}
+                           max_deg::Integer, tol_taylor) where {N}
     @assert istriu(A)
 
     n = size(A, 1)
@@ -27,7 +27,7 @@ function atomic_block_fun!(f::Function, F::AbstractMatrix,
     P0 = copy(M)
     P1 = similar(M)
     sflag = 1
-    sext = max(1, ceil(Int,log(cbrt(eps(typeof(tol))),tol))) * n
+    sext = 2n
     Δs = nothing
     μ = compute_μ(A; n)
     for s = 1:max_iter
@@ -36,13 +36,13 @@ function atomic_block_fun!(f::Function, F::AbstractMatrix,
         mul!(P1, P0, M)
 
         # check convergence
-        if abs(ft[s+1]) * norm(P0, Inf) ≤ tol * normF
+        if abs(ft[s+1]) * norm(P0, Inf) ≤ tol_taylor * normF
             if isone(sflag)
                 rem_iter = max_iter - s
                 (rem_iter < sext) && (sext = rem_iter)
                 Δs = compute_Δ(f, Λ, s, n, sext)
             end
-            μ * Δs[sflag] * norm(P1, Inf) ≤ tol * normF && break
+            μ * Δs[sflag] * norm(P1, Inf) ≤ tol_taylor * normF && break
             sflag += 1
         end
         (sflag == sext+2) && (sflag = 1)
@@ -53,19 +53,20 @@ function atomic_block_fun!(f::Function, F::AbstractMatrix,
 end
 
 function atomic_block_fun!(f::Function, F::AbstractMatrix,
-                           A::AbstractMatrix, ::Val{1}, max_deg::Integer, tol)
+                           A::AbstractMatrix, ::Val{1}, 
+                           max_deg::Integer, tol_taylor)
     elem_fun!(f, F, A)
 end
 
 function atomic_block_fun!(f::Function, F::AbstractMatrix, 
                            A::AbstractMatrix; max_deg=250,
-                           tol_tay=cbrt(eps())^2,
+                           tol_taylor=100eps(),
                            checknative=native(f))
     if checknative
         fA = f(A)
         typeof(fA) <: Number ? copyto!(F, fA*I) : copy!(F, fA)
     else
-        atomic_block_fun!(f, F, A, Val(size(A,1)), max_deg, tol_tay)               
+        atomic_block_fun!(f, F, A, Val(size(A,1)), max_deg, tol_taylor)               
     end
     F
 end

@@ -4,7 +4,7 @@ using Test
 @testset "MatrixFuns.jl" begin
     t0 = time()
     @testset "Split" begin
-        println("##### Testing split points...")
+        println("##### Testing points splitting...")
         t = @elapsed include("split.jl")
         println("##### done (took $t seconds).")
     end
@@ -24,7 +24,7 @@ using Test
         println("##### done (took $t seconds).")
     end
     @testset "DividedDifference" begin
-        println("##### Testing divided difference computed by Opitz' formula functionality...")
+        println("##### Testing divided difference functionality...")
         t = @elapsed include("divided_difference.jl")
         println("##### done (took $t seconds).")
     end

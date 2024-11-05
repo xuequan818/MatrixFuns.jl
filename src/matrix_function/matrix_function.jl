@@ -20,7 +20,7 @@ When `sep=Inf`, the eigenvalues are only split by `color`.
 
 `max_deg` the maximum Taylor series order for the diagonal blocks computation.
 
-`tol_tay` the termination tolerance for evaluating the Taylor series of diagonal blocks.
+`tol_taylor` the termination tolerance for evaluating the Taylor series of diagonal blocks.
 
 `scale` the scaling of the Talyor series error, is used to control the spread of each splitting cluster. When `scale=Inf`, split the eigenvalues only once with `sep`.
 
@@ -37,7 +37,7 @@ E.g., for the `sign` function, users can customize the color mapping using
 """
 function mat_fun(f::Function, A::AbstractMatrix{TT};               
                  sep=0.1, max_deg=250, 
-                 tol_tay=cbrt(eps(real(float((TT)))))^2,
+                 tol_taylor=100eps(real(float((TT)))),
                  scale=1.0, color::Function=(x->1), 
                  ε=eps(real(float((TT)))), 
                  checknative=native(f)) where {TT<:Number}      
@@ -85,7 +85,7 @@ function mat_fun(f::Function, A::AbstractMatrix{TT};
         F = atomic_block_fun(f, T; max_deg, checknative)
     else
         S, block = reorder_schur(S, split_map)
-        F = block_parlett_recurrence(f, S.T, block; max_deg, tol_tay, checknative)
+        F = block_parlett_recurrence(f, S.T, block; max_deg, tol_taylor, checknative)
     end
 
     return S.Z * F * S.Z'
