@@ -22,7 +22,6 @@ end
 
 @testset "1/(1+exp(1000*x))" begin
     f(x) = 1 / (1 + exp(1000 * x))
-    color(x) = x < 0 ? 1 : 2
     for i = 1:N
         d = nth_derivative(f, x, i - 1)
         dd = div_diff(f, fill(x, i); scale=0.01)

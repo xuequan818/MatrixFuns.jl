@@ -27,7 +27,7 @@ When `sep=Inf`, the eigenvalues are only split by `color`.
 `color(x::Number)::Integer` an index mapping function. 
 This is to ensure all eigenvalues within a cluster have the same color index. 
 By default, the `color` function maps `x` to `1`. 
-For discontinuous functions, users can assign a distinct color to each continuous segment. 
+For discontinuous functions, users can assign a distinct color to each continuous interval. 
 E.g., for the `sign` function, users can customize the color mapping using 
 `color = x -> Int(real(sign(x)))`
 

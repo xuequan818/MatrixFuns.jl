@@ -17,14 +17,13 @@ end
 
 @testset "1/(1+exp(1000*x))" begin
     f(x) = 1 / (1 + exp(1000 * x))
-	color(x) = x < 0 ? 1 : 2
     for n in N
         D = rand(n) .- 0.5
         (0 in D) && (D[findall(iszero, D)] .= 0.1)
         P = rand(n, n)
         A = P * Diagonal(D) * inv(P)
         ref = P * Diagonal(f.(D)) * inv(P)
-        result = mat_fun(f, A; scale=0.01, color, checknative=false)
+        result = mat_fun(f, A; scale=0.01, checknative=false)
         @test isapprox(ref, result)
     end
 end
