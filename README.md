@@ -120,7 +120,7 @@ julia> B = triu(X)
  0.0   0.055  0.05
  0.0   0.0    0.06
 
-julia> mat_fun(g, B; sep=0.001) # reference
+julia> mat_fun(g, B; sep=0.001) # reference computed by standard Parlett recurrence
 3×3 Matrix{Float64}:
  0.0499792  10.6305   -52.6235
  0.0         1.11302    0.10575
