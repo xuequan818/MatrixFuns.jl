@@ -69,7 +69,7 @@ julia> f1(x) = f(x;μ=1.15);
 
 julia> f2(x) = f(x;μ=0.05);
 
-julia> # returns the wrong result for default `scale`
+julia> ## returns the wrong result for default `scale`
 
 julia> mat_fun(f1, A) 
 3×3 Matrix{Float64}:
@@ -86,11 +86,11 @@ julia> mat_fun_frechet(f2, X, hs)
  2.55222e115  9.24584e114  -3.37442e115
  1.80227e115  4.61108e114  -2.77086e115
 
-julia> # returns the correct result for smaller `scale`
+julia> ## returns the correct result for smaller `scale`
 
 julia> scale = 0.01;
 
-julia> mat_fun(f1, A; scale) # returns the correct result for smaller `scale`
+julia> mat_fun(f1, A; scale)
 3×3 Matrix{Float64}:
  1.0  0.0  -50.0
  0.0  1.0  -10.0
@@ -143,7 +143,7 @@ Specially, for constant functions, or piecewise functions consisting of constant
 ```julia
 julia> heaviside(x) = x < x0 ? 1 : 0 # Heaviside step function
 
-julia> # set `checknative=false` to avoid the cost of checking function nativity
+julia> ## set `checknative=false` to avoid the cost of checking function nativity
 
 julia> @time mat_fun(heaviside, B; color, checknative=false) 
   0.000099 seconds (100 allocations: 6.422 KiB)
