@@ -1,7 +1,7 @@
 [![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://xuequan818.github.io/MatrixFuns.jl/stable/)
 [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://xuequan818.github.io/MatrixFuns.jl/dev/)
 [![Build Status](https://github.com/xuequan818/MatrixFuns.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/xuequan818/MatrixFuns.jl/actions/workflows/CI.yml?query=branch%3Amain)
-[![Coverage](https://codecov.io/gh/xuequan818/MatrixFuns.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/xuequan818/MatrixFuns.jl)
+[![Coverage](https://codecov.io/gh/xuequan818/MatrixFuns.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/xuequan818/MatrixFuns.jl)
 
 # MatrixFuns.jl
 A Julia package for computing scalar functions of matrix variables and their Fréchet derivatives. The matrix functions computation (for arbitrary square matrices) is based on the [Schur-Parlett algorithm]( https://doi.org/10.1137/S0895479802410815) (with improvements). The higher order Fréchet derivatives (for Hermitian matrices) are formulated similarly to the [Daleskii-Krein theorem](https://www.ams.org/books/trans2/047/), where the [divided differences](https://en.wikipedia.org/wiki/Divided_differences) are calculated accurately by the [Opitz' formula](https://www.emis.de/journals/SAT/papers/2/). In particular, `MatrixFuns` supports the computation of discontinuous functions. 
