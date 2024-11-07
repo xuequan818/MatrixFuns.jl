@@ -44,7 +44,7 @@ end
 end
 
 @testset "heaviside step function" begin
-    heaviside(x) = x < 0 ? 1.0 : 0.0
+    heaviside(x) = x < 0 ? 0 : 1
 	color(x) = x < 0 ? 1 : 2
     for n in N
         D = rand(n) .- 0.5

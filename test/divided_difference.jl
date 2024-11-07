@@ -52,7 +52,7 @@ end
 end
 
 @testset "heaviside step function" begin
-    heaviside(x) = (x-2.5) < 0 ? 1.0 : 0.0
+    heaviside(x) = (x-2.5) < 0 ? 0 : 1
     color(x) = (x-2.5) < 0 ? 1 : 2
     for i = 1:N
         x = X[1:i]

@@ -39,7 +39,7 @@ end
 end
 
 @testset "heaviside step function" begin
-    heaviside(x) = x < 0 ? 1.0 : 0.0
+    heaviside(x) = x < 0 ? 0 : 1
     color(x) = x < 0 ? 1 : 2
     for i = 1:N
         d = nth_derivative(heaviside, x, i - 1)
