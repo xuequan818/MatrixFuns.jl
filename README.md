@@ -9,9 +9,9 @@ A Julia package for computing scalar functions of matrix variables and their Fr�
 ## Examples
 For smooth functions like `exp`:
 ```julia
-julia> using LinearAlgebra
-
 julia> using MatrixFuns
+
+julia> using LinearAlgebra
 
 julia> A = [1 1 0; 0 1.1 1; 0 0 1.2]
 3×3 Matrix{Float64}:
@@ -63,7 +63,7 @@ julia> mat_fun(erf, A)
 ```
 For singular functions, such as [Fermi-Dirac](https://en.wikipedia.org/wiki/Fermi%E2%80%93Dirac_statistics) functions with temperatures close to 0, users can set a smaller `scale` to reduce the spread of each block to avoid large Taylor expansion errors near the singularities.
 ```julia
-julia> f(x) = 1/(1+exp(1000*(x-1.15))); # Fermi-Dirac function with temperature equal to 1e-3.
+julia> f(x) = 1/(1+exp(1000*(x-1.15))); # Fermi-Dirac function with temperature equal to 1e-3
 
 julia> mat_fun(f, A; scale=0.01)
 3×3 Matrix{Float64}:
