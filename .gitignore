@@ -6,3 +6,4 @@
 /docs/build/
 /not_needed
 /xq.jl
+*.DS_Store
