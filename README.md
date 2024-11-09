@@ -61,7 +61,7 @@ julia> mat_fun(erf, A)
  0.0       0.880205   0.301089
  0.0       0.0        0.910314
 ```
-For singular functions, such as [Fermi-Dirac](https://en.wikipedia.org/wiki/Fermi%E2%80%93Dirac_statistics) functions with temperatures close to 0, users can set a smaller `scale` to reduce the spread of each block to avoid large Taylor expansion errors near the singularities.
+For singular functions, such as [Fermi-Dirac](https://en.wikipedia.org/wiki/Fermi%E2%80%93Dirac_statistics) functions with temperatures close to 0, user can set a smaller `scale` to reduce the spread of each block to avoid large Taylor expansion errors near the singularities.
 ```julia
 julia> f(x) = 1/(1+exp(1000*(x-1.15))); # Fermi-Dirac function with temperature equal to 1e-3
 
@@ -72,7 +72,7 @@ julia> mat_fun(f, A; scale=0.01)
  0.0  0.0    1.92875e-22
 ```
 
-For piecewise functions consisting of continuous intervals, users can customize `color` function to first split the eigenvalues into different continuous intervals.
+For piecewise functions consisting of continuous intervals, user can customize `color` function to first split the eigenvalues into different continuous intervals.
 ```julia
 julia> x0 = 0.051 # discontinuous point
 
@@ -87,7 +87,7 @@ julia> mat_fun_frechet(g, X, hs; color)
  0.00975085  0.0233283  0.0241837
 ```
 
-Specially, for constant functions, or piecewise functions consisting of constant intervals, users can further set `sep=Inf` to only split the eigenvalues by `color`, which will be more efficient.
+Specially, for constant functions, or piecewise functions consisting of constant intervals, user can further set `sep=Inf` to only split the eigenvalues by `color`, which will be more efficient.
 ```julia
 julia> color(x) = Int(sign(x))
 
