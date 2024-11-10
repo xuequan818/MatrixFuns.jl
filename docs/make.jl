@@ -14,6 +14,11 @@ makedocs(;
     ),
     pages=[
         "Home" => "index.md",
+        "Background" => [
+            "Computing Matrix Functions" => "background/matfun.md",
+            "Divided difference" => "background/divdiff.md",
+            "Fréchet derivative" => "background/frechet.md"
+        ]
     ],
 )
 

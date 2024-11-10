@@ -39,7 +39,7 @@ b, & x < 0,
 where $a,b\in\mathbb{Z}$ and $a\neq b$.
 
 
-The splitting strategy maps each eigenvalue $\lambda_i$ of $T$ to an integer $q_i$, $1\leq q_i \leq n$. The remainning problem is to find a series of swaps to convert $q=(q_1,\dots,q_n)$ to a confluent permutation, i.e., any repeated $q_i$ are next to each other. Instead of ordering $q$ in ascending average index, here we only sort the $q_i$ that are not confluent in descending order, e.g., 
+The splitting strategy maps each eigenvalue $\lambda_i$ of $T$ to an integer $q_i$, $1\leq q_i \leq n$. The remainning problem is to find a series of swaps to convert $q=(q_1,\dots,q_n)$ to a confluent permutation, i.e., any repeated $q_i$ are next to each other. Instead of ordering $q$ in ascending average index, here we only sort $q_i$ that are not confluent in descending order, e.g., 
 ```math
 q=(1,4,2,1,2,3,3,2) \to (1,1,4,2,2,3,3,2) \to(2,2,2,1,1,4,3,3).
 ```
