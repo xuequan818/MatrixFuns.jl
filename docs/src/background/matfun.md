@@ -18,7 +18,7 @@ This Sylvester equation is nonsingular when $T_{ii}$ and $T_{jj}$ have no common
 ## Schur-Parlett with improvements
 The [Schur-Parlett]( https://doi.org/10.1137/S0895479802410815) algorithm is inspired by the block Parlett recurrence, which has two key parts: reordering and blocking of the Schur factor $T$, and computation of the atomic block $f(T_{jj})$. Here we will focus on the first part, for more details on the atomic block computation, please see Section 2 of [![DOI](https://img.shields.io/badge/DOI-10.1137/S0895479802410815-blue)](https://doi.org/10.1137/S0895479802410815).
 
-### Splitting
+
 Let $\widetilde{T}=U^*TU=(\widetilde{T}_{ij})$ be the reordered upper triangular matrix, where $U$ is unitary. The splitting strategy requires that the spectra of the diagonal blocks satisfy: 
 * $\min\big\{|\lambda -\mu| : \lambda\in \Lambda(\widetilde{T}_{ii}),\, \mu\in \Lambda(\widetilde{T}_{jj}),\, i\neq j\big\}>\delta$; 
 * for $\widetilde{T}_{ii}\in\mathbb{C}^{m\times m}$ with $m>1$, $\forall λ \in \widetilde{T}_{ii}$, $\exists μ ∈ \widetilde{T}_{ii}$ and $μ ≠ λ$, s.t. |$λ - μ| ≤ \delta$.
@@ -29,7 +29,7 @@ Here, $\delta>0$ is a tolerance. The second condition can easily lead to large b
 ```
 where the left side is the Taylor expansion error and the right side is the splitting error. This condition reduces to $\Delta < \alpha$ when $N=\infty$. Note that the scaling $\alpha$ depends on the smoothness of $f$ in the convex sets containing $ \Lambda(\widetilde{T}_{ii})$. 
 
-Additionally, in order to deal with discontinuous functions, we also use a color mapping $\mathfrak{c}: \mathbb{{C}} \to \mathbb{Z}$ so that eigenvalues from different continuous intervals are not split together. For example, consider the Heaviside step function $H(x):=\pmb{1}_{x\geq 0}$, the color mapping can be defined as 
+Additionally, in order to deal with discontinuous functions, we also use a color mapping $\mathfrak{c}: \mathbb{{C}} \to \mathbb{Z}$ so that eigenvalues from different continuous intervals are not split together. For example, consider the Heaviside step function $H(x)=\pmb{1}_{x\geq 0}$, the color mapping can be defined as 
 ```math
 	\mathfrak{c}(x) = \begin{cases} 
 a, & x \geq 0, \\ 
@@ -38,4 +38,9 @@ b, & x < 0,
 ```
 where $a,b\in\mathbb{Z}$ and $a\neq b$.
 
-### Swapping
+
+The splitting strategy maps each eigenvalue $\lambda_i$ of $T$ to an integer $q_i$, $1\leq q_i \leq n$. The remainning problem is to find a series of swaps to convert $q=(q_1,\dots,q_n)$ to a confluent permutation, i.e., any repeated $q_i$ are next to each other. Instead of ordering $q$ in ascending average index, here we only sort the $q_i$ that are not confluent in descending order, e.g., 
+```math
+q=(1,4,2,1,2,3,3,2) \to (1,1,4,2,2,3,3,2) \to(2,2,2,1,1,4,3,3).
+```
+The reordering operation is implemented by `ordschur!` in `LinearAlgebra`.
