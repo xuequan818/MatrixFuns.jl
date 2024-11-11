@@ -5,11 +5,11 @@ DocMeta.setdocmeta!(MatrixFuns, :DocTestSetup, :(using MatrixFuns); recursive=tr
 
 makedocs(;
     modules=[MatrixFuns],
-    authors="xquan818 <840169780@qq.com> and contributors",
+    authors="xquan818 <xuequan818@gmail.com> and contributors",
     sitename="MatrixFuns.jl",
     format=Documenter.HTML(;
         canonical="https://xuequan818.github.io/MatrixFuns.jl",
-        edit_link="main",
+        edit_link="master",
         assets=String[],
     ),
     pages=[
