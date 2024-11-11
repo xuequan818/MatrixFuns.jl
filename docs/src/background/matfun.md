@@ -23,7 +23,7 @@ Let $\widetilde{T}=U^*TU=(\widetilde{T}_{ij})$ be the reordered upper triangular
 * separation between blocks: $\min\big\{|\lambda -\mu| : \lambda\in \Lambda(\widetilde{T}_{ii}),\, \mu\in \Lambda(\widetilde{T}_{jj}),\, i\neq j\big\}>\delta$,
 * separation within blocks: for $\widetilde{T}_{ii}\in\mathbb{C}^{m\times m}$ with $m>1$, $\forall λ \in \widetilde{T}_{ii}$, $\exists μ ∈ \widetilde{T}_{ii}$ and $μ ≠ λ$, s.t. |$λ - μ| ≤ \delta$.
 
-Here, $\delta>0$ is a tolerance. The second condition can easily lead to large blocks, which destabilizes the atomic block computation based on Taylor expansion. Let $\Delta:=\max\big\{|\lambda -\mu| : \lambda,\,\mu\in \Lambda(\widetilde{T}_{ii})\big\}$ be the spread of the block $\widetilde{T}_{ii}$, $N$ be the maximum Taylor series order, and $\alpha$ be the scaling of the Talyor series error. We split the large block with smaller $\delta$ until 
+Here, $\delta>0$ is a splitting tolerance. The second condition can easily lead to large blocks, which destabilizes the atomic block computation based on Taylor expansion. Let $\Delta:=\max\big\{|\lambda -\mu| : \lambda,\,\mu\in \Lambda(\widetilde{T}_{ii})\big\}$ be the spread of the block $\widetilde{T}_{ii}$, $N$ be the maximum Taylor series order, and $\alpha$ be the scaling of the Talyor series error. We split the large block with smaller $\delta$ until 
 ```math
 \bigg(\frac{\Delta}{\alpha}\bigg)^{N+1} \leq \frac{\varepsilon}{\delta},
 ```
