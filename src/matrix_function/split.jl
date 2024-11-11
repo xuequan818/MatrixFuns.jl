@@ -131,21 +131,6 @@ function split_by_sep(pts::AbstractVector{<:Real}, δ::Real)
     return asgmt, sp, rng
 end
 
-function get_dist_vec(pts::AbstractVector{<:Real})
-    # Sort points in decreasing order to quickly calculate distances
-    if issorted(pts; rev=true)
-        sp = collect(1:length(pts))
-        decrease = true
-    else
-        sp = sortperm(pts; rev=true) 
-        decrease = false
-        pts = pts[sp]
-    end
-    @views dist = pts[1:end-1] - pts[2:end]
-
-    return dist, sp, decrease
-end
-
 # Complex points
 function split_by_sep(pts::AbstractVector{<:Complex}, δ::Real)
     N = length(pts)
@@ -168,6 +153,21 @@ function split_by_sep(pts::AbstractVector{<:Complex}, δ::Real)
     sp, rng = split_cluster(asgmt)
 
     return asgmt, sp, rng
+end
+
+function get_dist_vec(pts::AbstractVector{<:Real})
+    # Sort points in decreasing order to quickly calculate distances
+    if issorted(pts; rev=true)
+        sp = collect(1:length(pts))
+        decrease = true
+    else
+        sp = sortperm(pts; rev=true) 
+        decrease = false
+        pts = pts[sp]
+    end
+    @views dist = pts[1:end-1] - pts[2:end]
+
+    return dist, sp, decrease
 end
 
 function get_dist_mat(px::AbstractVector{T}, 

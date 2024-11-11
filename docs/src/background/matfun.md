@@ -16,7 +16,7 @@ T_{ii}F_{ij}-F_{ij}T_{jj} = F_{ii}T_{ij}-T_{ij}F_{jj} + \Bigg(\sum_{k=i+1}^{j-1}
 This Sylvester equation is nonsingular when $T_{ii}$ and $T_{jj}$ have no common eigenvalues.
 
 ## Schur-Parlett with improvements
-The [Schur-Parlett]( https://doi.org/10.1137/S0895479802410815) algorithm is inspired by the block Parlett recurrence, which has two key parts: reordering and blocking of the Schur factor $T$, and computation of the atomic block $f(T_{jj})$. Here we will focus on the first part, for more details on the atomic block computation, please see Section 2 of [![DOI](https://img.shields.io/badge/DOI-10.1137/S0895479802410815-blue)](https://doi.org/10.1137/S0895479802410815).
+The [Schur-Parlett](https://doi.org/10.1137/S0895479802410815) algorithm is inspired by the block Parlett recurrence, which has two key parts: reordering and blocking of the Schur factor $T$, and computation of the atomic block $f(T_{jj})$. Here we will focus on the first part, for more details on the atomic block computation, please see Section 2 of [![DOI](https://img.shields.io/badge/DOI-10.1137/S0895479802410815-blue)](https://doi.org/10.1137/S0895479802410815).
 
 
 Let $\widetilde{T}=U^*TU=(\widetilde{T}_{ij})$ be the reordered upper triangular matrix, where $U$ is unitary. The splitting strategy requires that the spectra of the diagonal blocks satisfy: 
