@@ -20,8 +20,8 @@ The [Schur-Parlett](https://doi.org/10.1137/S0895479802410815) algorithm is insp
 
 
 Let $\widetilde{T}=U^*TU=(\widetilde{T}_{ij})$ be the reordered upper triangular matrix, where $U$ is unitary. The splitting strategy requires that the spectra of the diagonal blocks satisfy: 
-* $\min\big\{|\lambda -\mu| : \lambda\in \Lambda(\widetilde{T}_{ii}),\, \mu\in \Lambda(\widetilde{T}_{jj}),\, i\neq j\big\}>\delta$; 
-* for $\widetilde{T}_{ii}\in\mathbb{C}^{m\times m}$ with $m>1$, $\forall λ \in \widetilde{T}_{ii}$, $\exists μ ∈ \widetilde{T}_{ii}$ and $μ ≠ λ$, s.t. |$λ - μ| ≤ \delta$.
+* $\min\big\{|\lambda -\mu| : \lambda\in \Lambda(\widetilde{T}_{ii}),\, \mu\in \Lambda(\widetilde{T}_{jj}),\, i\neq j\big\}>\delta$
+* $\widetilde{T}_{ii}\in\mathbb{C}^{m\times m}$ with $m>1$, $\forall λ \in \widetilde{T}_{ii}$, $\exists μ ∈ \widetilde{T}_{ii}$ and $μ ≠ λ$, s.t. |$λ - μ| ≤ \delta$
 
 Here, $\delta>0$ is a tolerance. The second condition can easily lead to large blocks, which destabilizes the atomic block computation based on Taylor expansion. Let $\Delta:=\max\big\{|\lambda -\mu| : \lambda,\,\mu\in \Lambda(\widetilde{T}_{ii})\big\}$ be the spread of the block $\widetilde{T}_{ii}$, $N$ be the maximum Taylor series order, and $\alpha$ be the scaling of the Talyor series error. We split the large block with smaller $\delta$ until 
 ```math
