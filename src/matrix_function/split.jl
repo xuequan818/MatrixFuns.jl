@@ -97,9 +97,11 @@ function split_cluster(asgmt::AbstractVector{T}) where {T<:Integer}
 end
 
 """
+    split_by_sep(pts::AbstractVector{<:Real}, δ::Real)
+    split_by_sep(pts::AbstractVector{<:Complex}, δ::Real)
+
 Split the data points (eigenvalues) by separation parameter δ.
 """
-# Real points
 function split_by_sep(pts::AbstractVector{<:Real}, δ::Real)
     N = length(pts)
     @assert N > 1
@@ -131,7 +133,6 @@ function split_by_sep(pts::AbstractVector{<:Real}, δ::Real)
     return asgmt, sp, rng
 end
 
-# Complex points
 function split_by_sep(pts::AbstractVector{<:Complex}, δ::Real)
     N = length(pts)
     @assert length(pts) > 1
