@@ -1,5 +1,7 @@
-# Construct the splitting cluster assignments vector z 
-# (z_i is the index of the splitting cluster for the i-th data points (eigenvalues)). 
+"""
+Construct the splitting cluster assignments vector z 
+(z_i is the index of the splitting cluster for the i-th data points (eigenvalues)). 
+"""
 function get_splittings(pts::Vector{T}; sep=0.1,
 						color::Function=(x->1),
                         checknative=false,
@@ -75,7 +77,10 @@ function _get_splittings(pts::AbstractVector{T},
     return asgmt
 end
 
-# Split the same mapping index into one cluster
+
+"""
+Split the same color mapping index into one cluster
+"""
 function split_cluster(asgmt::AbstractVector{T}) where {T<:Integer}
     N = length(asgmt)
 
@@ -91,6 +96,9 @@ function split_cluster(asgmt::AbstractVector{T}) where {T<:Integer}
     return sp, rng
 end
 
+"""
+Split the data points (eigenvalues) by separation parameter δ.
+"""
 # Real points
 function split_by_sep(pts::AbstractVector{<:Real}, δ::Real)
     N = length(pts)
@@ -181,10 +189,16 @@ function retriu!(M::AbstractMatrix{T}, k::Integer; δ=zero(T)) where {T}
     M
 end
 
+"""
+Find the spread of the data points (eigenvalues).
+"""
 get_spread(pts::AbstractVector{<:Real}) = maximum(pts) - minimum(pts)
 get_spread(pts::AbstractVector{<:Complex}) = maximum(get_dist_mat(pts))
 get_spread(pts::T) where {T<:Number} = zero(real(T))
 
+"""
+Check that the spread error is smaller than the splitting error.
+"""
 function checkspread(pts::AbstractVector, scale, isnative, max_deg, tol)
     spread = get_spread(pts)
     checkspread(spread, scale, isnative, max_deg, tol)

@@ -1,8 +1,10 @@
 # Implemention of the parlett recurrence in      
 # DOI: https://doi.org/10.1017/S0962492910000036 
 
-# Implement the standard Parlett recurrence (Algorithm 4.2).
-# This is for the case where all eigenvalues are separated from each other.
+"""
+Implement the standard Parlett recurrence.
+This is for the case where all eigenvalues are separated from each other.
+"""
 function parlett_recurrence(f::Function, T::AbstractMatrix)
     @assert istriu(T)
     n = size(T, 1)
@@ -23,8 +25,10 @@ dot_noconj(x::AbstractVector{T}, y::AbstractVector) where {T<:Real} = dot(x,y)
 dot_noconj(x::AbstractVector{T}, y::AbstractVector{T}) where {T<:Complex} = BLAS.dotu(x, y)
 dot_noconj(x::Number, y::Number) = x*y
 
-# Implement the block Parlett recurrence (Algorithm 4.3).
-# This is for the case where there are eigenvalues are close.
+"""
+Implement the block Parlett recurrence.
+This is for the case where there are eigenvalues are close.
+"""
 function block_parlett_recurrence(f::Function, T::AbstractMatrix,
                                   block::Vector{UnitRange{Int}}; kwargs...)                                
     @assert istriu(T)

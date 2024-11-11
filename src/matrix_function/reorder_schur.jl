@@ -1,4 +1,6 @@
-# Reorder the Schur decomposition
+"""
+Reorder the Schur decomposition using `ordschur!`.
+"""
 function reorder_schur(S::Schur, asgmt)
     resp, rerng, block = get_swappings(asgmt)
 
@@ -15,9 +17,11 @@ function reorder_schur(S::Schur, asgmt)
 	return S, block
 end
 
-# Find the swap strategy that converts an unordered sequence             
-# into a sequence that aligns the same indexes together.
-# E.g., (1,4,2,1,2,3,3,2) -> (1,1,4,2,2,3,3,2) -> (2,2,2,1,1,4,3,3)			
+"""
+Find the swap strategy that converts an integer sequence             
+into a confluent sequence that the repeated indexes are next to each other.
+E.g., (1,4,2,1,2,3,3,2) -> (1,1,4,2,2,3,3,2) -> (2,2,2,1,1,4,3,3)
+"""			
 function get_swappings(asgmt::Vector{Int})
 	N = length(asgmt)
 

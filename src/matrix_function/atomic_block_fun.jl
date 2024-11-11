@@ -1,4 +1,22 @@
-## Implement the atomic block evaluation(Algorithm 4.4).
+"""
+    atomic_block_fun!(f, F, A; max_deg, tol_taylor, checknative)
+
+Implement the atomic block computation `f(A)`, and overwriting the values of `F`.
+"""
+function atomic_block_fun!(f::Function, F::AbstractMatrix,
+                           A::AbstractMatrix; max_deg=250,
+                           tol_taylor=100eps(),
+                           checknative=native(f))
+    if checknative
+        fA = f(A)
+        typeof(fA) <: Number ? copyto!(F, fA * I) : copy!(F, fA)
+    else
+        atomic_block_fun!(f, F, A, Val(size(A, 1)), max_deg, tol_taylor)
+    end
+    F
+end
+
+# Implement the atomic block evaluation(Algorithm 4.4).
 function atomic_block_fun!(f::Function, F::AbstractMatrix,
                            A::AbstractMatrix, ::Val{N},
                            max_deg::Integer, tol_taylor) where {N}
@@ -11,7 +29,7 @@ function atomic_block_fun!(f::Function, F::AbstractMatrix,
     # If f(x) = c, f(A) = c*I
     checkconstf, fσ = constant(f, σ)
     if checkconstf
-        copyto!(F, fσ*I)
+        copyto!(F, fσ * I)
         return F
     end
 
@@ -22,7 +40,7 @@ function atomic_block_fun!(f::Function, F::AbstractMatrix,
         max_iter = findlast(!iszero, ft) - 1
     end
 
-    copyto!(F, ft[1]*I)
+    copyto!(F, ft[1] * I)
     M = copy(A - σ * I)
     P0 = copy(M)
     P1 = similar(M)
@@ -45,38 +63,36 @@ function atomic_block_fun!(f::Function, F::AbstractMatrix,
             μ * Δs[sflag] * norm(P1, Inf) ≤ tol_taylor * normF && break
             sflag += 1
         end
-        (sflag == sext+2) && (sflag = 1)
+        (sflag == sext + 2) && (sflag = 1)
         copy!(P0, P1)
     end
 
     return F
 end
 
+# Implement the atomic block evaluation for size(A) = (1,1)
 function atomic_block_fun!(f::Function, F::AbstractMatrix,
-                           A::AbstractMatrix, ::Val{1}, 
+                           A::AbstractMatrix, ::Val{1},
                            max_deg::Integer, tol_taylor)
     elem_fun!(f, F, A)
 end
 
-function atomic_block_fun!(f::Function, F::AbstractMatrix, 
-                           A::AbstractMatrix; max_deg=250,
-                           tol_taylor=100eps(),
-                           checknative=native(f))
-    if checknative
-        fA = f(A)
-        typeof(fA) <: Number ? copyto!(F, fA*I) : copy!(F, fA)
-    else
-        atomic_block_fun!(f, F, A, Val(size(A,1)), max_deg, tol_taylor)               
-    end
-    F
-end
-function atomic_block_fun(f, A; kwargs...) 
+"""
+    atomic_block_fun(f, A; kwargs...)
+
+Implement the atomic block computation `f(A)`.
+"""
+function atomic_block_fun(f, A; kwargs...)
     T = promote_type(eltype(A), typeof(f(A[1])))
-    F = fill!(similar(A,T), 0)
+    F = fill!(similar(A, T), 0)
     atomic_block_fun!(f, F, A; kwargs...)
 end
 
-# Compute Taylor coefficients of `f` at `x0` for orders from `ordl` to `ordr`. 
+"""
+    taylor_coeffs(f, x0, ordr, ordl::Integer=0)
+    
+Compute Taylor coefficients of `f` at `x0` for orders from `ordl` to `ordr`. 
+"""
 @inline function taylor_coeffs(f::Function, x0::Number, ordr::Integer, ordl::Integer=0)
     @assert 0 ≤ ordl ≤ ordr
     try
@@ -91,12 +107,12 @@ end
 end
 
 # ordl = 0
-@inline function coef_by_ts(f::Function, x0::Number, 
+@inline function coef_by_ts(f::Function, x0::Number,
                             ordr::Integer, ordl::Val{0})
     f(x0 + Taylor1(typeof(x0), ordr)).coeffs
 end
 # ordl ≥ 1
-@inline function coef_by_ts(f::Function, x0::Number, 
+@inline function coef_by_ts(f::Function, x0::Number,
                             ordr::Integer, ordl::Val{N}) where {N}
     f(x0 + Taylor1(typeof(x0), ordr)).coeffs[N+1:end]
 end
@@ -106,20 +122,20 @@ end
 
 # Special functions
 @inline function coef_by_ts(f::typeof(erf), x0::Number, ordr::Integer, ordl::Integer)
-    coef_by_ts_special_fun(f, x -> 2/sqrt(pi)*exp(-x^2), x0, ordr, Val(ordl))
+    coef_by_ts_special_fun(f, x -> 2 / sqrt(pi) * exp(-x^2), x0, ordr, Val(ordl))
 end
 @inline function coef_by_ts(f::typeof(erfc), x0::Number, ordr::Integer, ordl::Integer)
-    coef_by_ts_special_fun(f, x -> -2/sqrt(pi)*exp(-x^2), x0, ordr, Val(ordl))
+    coef_by_ts_special_fun(f, x -> -2 / sqrt(pi) * exp(-x^2), x0, ordr, Val(ordl))
 end
 
 # ordl = 0
-@inline function coef_by_ts_special_fun(f::Function, df::Function, x0::Number, 
+@inline function coef_by_ts_special_fun(f::Function, df::Function, x0::Number,
                                         ordr::Integer, ordl::Val{0})
     c0 = f(x0)
     iszero(ordr) && return [c0]
-    isone(ordr)  && return [c0, df(x0)]
+    isone(ordr) && return [c0, df(x0)]
 
-    cn = df(x0 + Taylor1(typeof(x0), ordr-1)).coeffs
+    cn = df(x0 + Taylor1(typeof(x0), ordr - 1)).coeffs
     @. cn /= 1:ordr
     pushfirst!(cn, c0)
     return cn
@@ -128,21 +144,21 @@ end
 @inline function coef_by_ts_special_fun(f::Function, df::Function, x0::Number,
                                         ordr::Integer, ordl::Val{N}) where {N}
     isone(ordr) && return [df(x0)]
-    cn = df(x0 + Taylor1(typeof(x0), ordr-1)).coeffs[N:end]
+    cn = df(x0 + Taylor1(typeof(x0), ordr - 1)).coeffs[N:end]
     @. cn /= N:ordr
 end
 
 @inline function coef_by_arb(f::Function, x0::Number, ordr::Integer, ordl::Integer)
     farb = f(ArbSeries((x0, 1), degree=ordr))
     T = float(typeof(x0))
-    c = map(i->convert(T, farb[i]), ordl:ordr)
+    c = map(i -> convert(T, farb[i]), ordl:ordr)
 end
 
 # Check `f` is a constant function
 const TAYLOR0 = Taylor1(0)
 
 function constant(f, x)
-    try 
+    try
         fx = f(x + TAYLOR0)
         typeof(fx) <: Taylor1 ? (false, nothing) : (true, fx)
     catch
@@ -205,6 +221,6 @@ end
 
 function elem_fun(f, A)
     T = promote_type(eltype(A), typeof(f(A[1])))
-    F = fill!(similar(A,T), 0)
+    F = fill!(similar(A, T), 0)
     elem_fun!(f, F, A)
 end

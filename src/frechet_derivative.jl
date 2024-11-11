@@ -1,8 +1,9 @@
 """
-    mat_fun_frechet(f, eigs, Ψ::AbstractMatrix, h::Vector{AbstractMatrix})
-    mat_fun_frechet(f, H::AbstractMatrix, h::Vector{AbstractMatrix})
+    mat_fun_frechet(f, eigs, Ψ::AbstractMatrix, h::Vector{AbstractMatrix}; kwargs...)
+    mat_fun_frechet(f, H::AbstractMatrix, h::Vector{AbstractMatrix}; kwargs...)
 
 Return the n-th order Fréchet derivative `d^nf(H)h[1]…h[n]`, assuming `f` is called as `f(x)`.
+See `mat_fun` for a description of possible keyword arguments.
 """
 @inline function mat_fun_frechet(f::Function, eigs::AbstractVector{<:Real},
                                  Ψ::AbstractMatrix, h::Vector{TT};
@@ -75,10 +76,12 @@ end
     mat_fun_frechet(f, eigs, Ψ, h; kwargs...)
 end
 
-# Generate the divided difference tensor 
-# DD_F = f[λ_i0, λ_i2, ..., λ_in]
-# By the permutation symmetry of the divided difference, 
-# only need to calculate the irreducible vals
+"""
+Generate the divided difference tensor 
+`(DD_F)_{i_0,...,i_n} = f[λ_{i_0},..., λ_{i_n}]`.
+By the permutation symmetry of the divided difference, 
+only need to calculate the irreducible vals.
+"""
 function DD_tensor(f::Function, eigs::AbstractVector{<:Real}, 
                    order::Integer; kwargs...)
     N = length(eigs)

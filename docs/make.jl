@@ -18,11 +18,12 @@ makedocs(;
             "Computing Matrix Functions" => "background/matfun.md",
             "Divided difference" => "background/divdiff.md",
             "Fréchet derivative" => "background/frechet.md"
-        ]
-    ],
+        ],
+        "Examples" => "examples.md",
+        "API" => "api.md"],
 )
 
 deploydocs(;
     repo="github.com/xuequan818/MatrixFuns.jl",
-    devbranch="main",
+    devbranch="master",
 )
