@@ -94,7 +94,7 @@ julia> color(x) = Int(sign(x))
 julia> div_diff(sign, -1.1, 0.02, -0.01, 0.3; color, sep=Inf) # returns the 3rd order divided difference sign[-1.1, 0.02, -0.01, 0.3]
 -196.12683783190693
 ```
-For more details, please see the [documentation]().
+For more details, please see the [documentation](https://xuequan818.github.io/MatrixFuns.jl/dev/).
 
 ## Installation
 `MatrixFuns` is currently an unregistered package and therefore needs to be downloaded or cloned to the user's local computer first, and then installed by running
