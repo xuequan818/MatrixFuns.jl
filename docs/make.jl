@@ -16,8 +16,8 @@ makedocs(;
         "Home" => "index.md",
         "Background" => [
             "Computing Matrix Functions" => "background/matfun.md",
-            "Divided difference" => "background/divdiff.md",
-            "Fréchet derivative" => "background/frechet.md"
+            "Divided Differences" => "background/divdiff.md",
+            "Fréchet Derivatives" => "background/frechet.md"
         ],
         "Examples" => "examples.md",
         "API" => "api.md"],
