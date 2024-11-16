@@ -6,4 +6,5 @@
 /docs/build/
 /not_needed
 /xq.jl
+/test_study
 *.DS_Store
