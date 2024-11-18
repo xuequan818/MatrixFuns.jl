@@ -1,6 +1,6 @@
 name = "MatrixFuns"
 uuid = "de0a5e7d-9ed9-4b51-b397-e23faa31cb8d"
-authors = ["xquan818 <840169780@qq.com> and contributors"]
+authors = ["Xue Quan and Antoine Levitt"]
 version = "1.0.0-DEV"
 
 [deps]
