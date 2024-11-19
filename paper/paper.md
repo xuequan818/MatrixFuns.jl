@@ -29,8 +29,8 @@ In this work, we develop [MatrixFuns.jl](https://github.com/xuequan818/MatrixFun
 The computation of matrix functions is based on the Schur-Parlett algorithm[@DaviesHigham03,HighamMohy10], but with some improvements so that it can also support discontinuous functions.  
 
 # Statement of need
-MatrixFuns.jl aims to provide the convince computation for general matrix functions and arbitrary-order Fréchet derivatives (including divided differences) in Julia.
-Although Julia provides some native matrix functions, the selection is limited. 
+MatrixFuns.jl aims to provide convincing computations for general matrix functions and arbitrary-order Fréchet derivatives (including divided differences) in Julia.
+Although Julia provides some native matrix functions, the choice is limited. 
 Moreover, while some Julia packages offer tools for calculating Fréchet derivatives and divided differences, these are typically restricted to first-order computations. 
 In MATLAB, the [funm](https://www.mathworks.com/help/symbolic/sym.funm.html) function supports the evaluation of general matrix functions but does not handle discontinuous functions. Additionally, MATLAB also lacks functions to compute higher-order Fréchet derivatives.
 
