@@ -32,10 +32,11 @@ end
 
 @testset "1/(1+exp(1000*x))" begin
     f(x) = 1 / (1 + exp(1000 * (x-2.5)))
+    color(x) = (x-2.5) < 0 ? 1 : 2
     for i = 1:N
         x = X[1:i]
         dd_def = div_diff_def(f, x)
-        dd_table = div_diff(f, x; scale=0.01)
+        dd_table = div_diff(f, x; scale=0.01, color)
         @test isapprox(dd_def, dd_table)
     end
 end
