@@ -3,6 +3,7 @@ title: 'MatrixFuns.jl: Matrix functions in Julia'
 tags:
   - Matrix functions
   - Fréchet derivatives
+  - Divided differences
   - Julia
 authors:
  - name: Xue Quan
