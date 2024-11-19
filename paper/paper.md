@@ -37,31 +37,44 @@ In MATLAB, the [funm](https://www.mathworks.com/help/symbolic/sym.funm.html) fun
 
 
 # Example
-In addition to the usual smooth functions, MatrixFuns.jl can also support special functions and discontinuous functions. Here, we use the error function `erf` and the sign function `sign` to show how to use MatrixFuns.jl to handle functions with different smoothness.
-
+We first show how to use MatrixFuns.jl to compute the matrix functions, divided differences, and Fréchet derivatives for smooth functions such as `exp`.
 ```julia
-using MatrixFuns, SpecialFunctions
+using MatrixFuns
 
 A = [-0.1 1.0 0.0; 0.0 -0.05 1.0; 0.0 0.0 0.01];
 
-mat_fun(erf, A) # returns the matrix function erf(A)
+mat_fun(exp, A) # returns the matrix function exp(A)
 3×3 Matrix{Float64}:
- -0.112463   1.12182   0.0524648
-  0.0       -0.056372  1.12759
-  0.0        0.0       0.0112834
+ 0.904837  0.92784   0.477323
+ 0.0       0.951229  0.980346
+ 0.0       0.0       1.01005
 
-div_diff(erf, -0.1, -0.05, 0.01) # returns the second-order divided difference erf[-0.1,-0.05,0.01]
-0.05246477080974526
+div_diff(exp, -0.1, -0.05, 0.01) # returns the second-order divided difference exp[-0.1,-0.05,0.01]
+0.47732345844677654
 
 H = 0.5 * (A + A'); # generates a Hermitian matrix
 
 hs = map(i -> i * H, [1, 2]);
 
-mat_fun_frechet(erf, H, hs) # returns the second-order Fréchet derivative d^2erf(H)hs[1]hs[2]
+mat_fun_frechet(exp, H, hs) # returns the second-order Fréchet derivative d^2exp(H)hs[1]hs[2]
 3×3 Matrix{Float64}:
-  0.139046   -0.693291   0.0624829
- -0.693291    0.1322    -0.679545
-  0.0624829  -0.679545  -0.0118283
+ 0.519468  0.347941  0.55445
+ 0.347941  1.10871   0.46992
+ 0.55445   0.46992   0.610653
+ ```
+
+ 
+In addition to the usual smooth functions, MatrixFuns.jl can also support special functions and discontinuous functions. Here, we use the error function `erf` and the sign function `sign` to show how it can be usded to handle functions with different smoothness.
+```julia
+using MatrixFuns, SpecialFunctions
+
+A = [-0.1 1.0 0.0; 0.0 -0.05 1.0; 0.0 0.0 0.01];
+
+mat_fun(erf, A) # smooth function
+3×3 Matrix{Float64}:
+ -0.112463   1.12182   0.0524648
+  0.0       -0.056372  1.12759
+  0.0        0.0       0.0112834
 
 mat_fun(x -> erf(500x), A; scale=0.1) # singular function
 3×3 Matrix{Float64}:
