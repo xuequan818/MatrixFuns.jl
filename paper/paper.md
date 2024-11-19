@@ -63,8 +63,8 @@ mat_fun_frechet(exp, H, hs) # returns the second-order Fréchet derivative d^2ex
  0.55445   0.46992   0.610653
  ```
 
- 
-In addition to the usual smooth functions, MatrixFuns.jl can also support special functions and discontinuous functions. Here, we use the error function `erf` and the sign function `sign` to show how it can be usded to handle functions with different smoothness.
+
+In addition to the usual smooth functions, MatrixFuns.jl can also support special functions and discontinuous functions. Here, we use the error function `erf` and the sign function `sign` to show how it can be used to handle functions with different smoothness.
 ```julia
 using MatrixFuns, SpecialFunctions
 
