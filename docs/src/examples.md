@@ -62,7 +62,7 @@ julia> mat_fun(erf, A)
  0.0       0.880205   0.301089
  0.0       0.0        0.910314
 ```
-For singular functions, such as [Fermi-Dirac](https://en.wikipedia.org/wiki/Fermi%E2%80%93Dirac_statistics) functions with temperatures close to 0, users can set a smaller `scale` to reduce the spread of each block to avoid large Taylor expansion errors near the singularities.
+For singular functions, such as [Fermi-Dirac](https://en.wikipedia.org/wiki/Fermi%E2%80%93Dirac_statistics) functions with temperatures close to 0, users can set a smaller `scale` to reduce the spread of each block to avoid large Taylor expansion errors near the singularities, and can also customize `color` function to avoid the block's spectral range including singularities.
 ```julia
 julia> f(x;μ) = 1/(1+exp(1000*(x-μ))); # Fermi-Dirac function with temperature equal 1e-3.
 
@@ -91,16 +91,20 @@ julia> ## returns the correct result for smaller `scale`
 
 julia> scale = 0.01;
 
-julia> mat_fun(f1, A; scale)
+julia> color1(x) = x < 1.15 ? 1 : 2;
+
+julia> mat_fun(f1, A; scale, color=color1)
 3×3 Matrix{Float64}:
  1.0  0.0  -50.0
  0.0  1.0  -10.0
  0.0  0.0    1.92875e-22
 
-julia> div_diff(f2, a; scale)
+julia> color2(x) = x < 0.05 ? 1 : 2;
+
+julia> div_diff(f2, a; scale, color=color2)
 98.17057693049055
 
-julia> mat_fun_frechet(f2, X, hs; scale)
+julia> mat_fun_frechet(f2, X, hs; scale, color=color2)
 3×3 Matrix{Float64}:
   19.7425    1.97425   -19.7425
    1.97425   0.197425   -1.97425

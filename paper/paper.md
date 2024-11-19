@@ -76,13 +76,13 @@ mat_fun(erf, A) # smooth function
   0.0       -0.056372  1.12759
   0.0        0.0       0.0112834
 
-mat_fun(x -> erf(500x), A; scale=0.1) # singular function
+mat_fun(x -> erf(500x), A; scale=0.1, color=x->x<0 ? 1 : 2) # singular function
 3×3 Matrix{Float64}:
  -1.0   0.0  303.03
   0.0  -1.0   33.3333
   0.0   0.0    1.0
 
-mat_fun(sign, A; sep=Inf, color=x->Int(sign(x))) # discontinuous function
+mat_fun(sign, A; sep=Inf, color=x->Int(sign(x))) # discontinuous function with smooth branches
 3×3 Matrix{Float64}:
  -1.0   0.0  303.03
   0.0  -1.0   33.3333

@@ -61,11 +61,15 @@ julia> mat_fun(erf, A)
  0.0       0.880205   0.301089
  0.0       0.0        0.910314
 ```
-For singular functions, such as [Fermi-Dirac](https://en.wikipedia.org/wiki/Fermi%E2%80%93Dirac_statistics) functions with temperatures close to 0, user can set a smaller `scale` to reduce the spread of each block to avoid large Taylor expansion errors near the singularities.
+For singular functions, such as [Fermi-Dirac](https://en.wikipedia.org/wiki/Fermi%E2%80%93Dirac_statistics) functions with temperatures close to 0, user can set a smaller `scale` to reduce the spread of each block to avoid large Taylor expansion errors near the singularities, and can also customize `color` function to avoid the block's spectral range including singularities.
 ```julia
-julia> f(x) = 1/(1+exp(1000*(x-1.15))); # Fermi-Dirac function with temperature equal to 1e-3
+julia> μ = 1.15
 
-julia> mat_fun(f, A; scale=0.01)
+julia> f(x) = 1/(1+exp(1000*(x-μ))); # Fermi-Dirac function with temperature equal to 1e-3
+
+julia> color(x) = x < μ ? 1 : 2; # use `color` to avoid singularities.
+
+julia> mat_fun(f, A; scale=0.01, color)
 3×3 Matrix{Float64}:
  1.0  0.0  -50.0
  0.0  1.0  -10.0
