@@ -5,7 +5,7 @@ Construct the splitting cluster assignments vector z
 function get_splittings(pts::Vector{T}; sep=0.1,
 						color::Function=(x->1),
                         checknative=false,
-                        kwargs...) where {T<:Number}
+                        kwargs...) where {T<:RealOrComplex}
     N = length(pts) 
     if N == 1
         return [1]
@@ -49,7 +49,7 @@ function _get_splittings(pts::AbstractVector{T},
                          checknative::Bool;
                          max_deg::Int=250,
 						 scale::Real=1.0, 
-						 ε=eps(real(T))) where {T<:Number}
+						 ε=eps(real(T))) where {T<:RealOrComplex}
     if length(pts) == 1
         return [min_ind]
     end

@@ -38,5 +38,10 @@ using Test
         t = @elapsed include("frechet_derivative.jl")
         println("##### done (took $t seconds).")
     end
+    @testset "Chain Rules" begin
+        println("##### Testing Chain Rules functionality...")
+        t = @elapsed include("rules.jl")
+        println("##### done (took $t seconds).")
+    end
     println("##### Running all MatrixFuns tests took $(time() - t0) seconds.")
 end

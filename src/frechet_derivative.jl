@@ -1,17 +1,28 @@
 """
-    mat_fun_frechet(f, eigs, Ψ::AbstractMatrix, h::Vector{AbstractMatrix}; kwargs...)
     mat_fun_frechet(f, H::AbstractMatrix, h::Vector{AbstractMatrix}; kwargs...)
+    mat_fun_frechet(DD_F, Ψ::AbstractMatrix, h::Vector{AbstractMatrix})
 
 Return the n-th order Fréchet derivative `d^nf(H)h[1]…h[n]`, assuming `f` is called as `f(x)`.
 See `mat_fun` for a description of possible keyword arguments.
 """
-@inline function mat_fun_frechet(f::Function, eigs::AbstractVector{<:Real},
-                                 Ψ::AbstractMatrix, h::Vector{TT};
-                                 kwargs...) where {TT<:AbstractMatrix}
-    N = length(eigs)
+@inline function mat_fun_frechet(f::Function, H::AbstractMatrix,
+                                 h::Vector{<:AbstractMatrix}; kwargs...)
+    # compute the full eigen decomposition
+    eigs, Ψ = eigen(H)
+
+    # compute the divided difference tensor 
+    DD_F = DD_tensor(f, eigs, length(h); kwargs...)
+
+    # compute the frechet derivative by eigen pairs
+    mat_fun_frechet(DD_F, Ψ, h)
+end
+
+@inline function mat_fun_frechet(DD_F::AbstractArray, Ψ::AbstractMatrix,
+                                 h::Vector{TT}) where {TT<:AbstractMatrix}
+    N = size(Ψ, 1)
     order = length(h)
-    DD_F = DD_tensor(f, eigs, order; kwargs...)
-    h = map(x -> inv(Ψ) * x * Ψ, h)
+    invΨ = inv(Ψ)
+    h = map(x -> invΨ * x * Ψ, h)
 
     # F_1 =  h_1 ∘ Λ^{0,1}
     if order == 1
@@ -21,7 +32,7 @@ See `mat_fun` for a description of possible keyword arguments.
             DD_F = V.(DD_F)
         end
         @. DD_F *= h[1]
-        return Ψ * DD_F * inv(Ψ)
+        return Ψ * DD_F * invΨ
     end
 
     N0 = N^(order - 2)
@@ -65,15 +76,7 @@ See `mat_fun` for a description of possible keyword arguments.
         mul!(val, true, hF, true, true) # val += hF
     end
 
-    Ψ * transpose(val) * inv(Ψ)
-end
-
-@inline function mat_fun_frechet(f::Function, H::AbstractMatrix, 
-                                 h::Vector{<:AbstractMatrix}; kwargs...)          
-    # compute the full eigen decomposition
-    eigs, Ψ = eigen(H)
-    # compute the frechet derivative by eigen pairs
-    mat_fun_frechet(f, eigs, Ψ, h; kwargs...)
+    Ψ * transpose(val) * invΨ
 end
 
 """

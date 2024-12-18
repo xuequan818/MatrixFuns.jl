@@ -1,18 +1,16 @@
 module FrechetDerivative
 
 using Test
-using MatrixFuns
+import MatrixFuns: mat_fun_frechet, DD_tensor
 using LinearAlgebra
 using Combinatorics
 
 # compute the frechet derivative by looping elements
-function frechet_loop(f::Function, eigs::Vector{<:Real},
-					  Ψ::AbstractMatrix, hs::Vector{TT}; 
-					  kwargs...) where {TT<:AbstractMatrix}
-    N = length(eigs)
-    order = length(hs)
-    hs = map(x -> inv(Ψ) * x * Ψ, hs)
-    DD_F = MatrixFuns.DD_tensor(f, eigs, order; kwargs...)
+function frechet_loop(DD_F::AbstractArray, Ψ::AbstractMatrix,
+                      h::Vector{TT}) where {TT<:AbstractMatrix}
+    N = size(Ψ, 1)
+    order = length(h)
+    hs = map(x -> inv(Ψ) * x * Ψ, h)
 
     pert = collect(permutations(1:order))
     T = promote_type(eltype(Ψ), eltype(TT))
@@ -56,8 +54,9 @@ const f(x) = 1/(1+exp(x))
 	for order in 1:4
 		h = [rand(N, N) for i = 1:order]
 		hs = [0.5 * (x + x') for x in h]
-        fd_test = frechet_loop(f, eigs, Ψ, hs)
-        fd = mat_fun_frechet(f, eigs, Ψ, hs)
+        DD_F = DD_tensor(f, eigs, order)
+        fd_test = frechet_loop(DD_F, Ψ, hs)
+        fd = mat_fun_frechet(DD_F, Ψ, hs)
         @test isapprox(fd_test, fd)
 	end
 end
@@ -70,8 +69,9 @@ end
     for order in 1:4
         h = [rand(T, N, N) for i = 1:order]
         hs = [0.5 * (x + x') for x in h]
-        fd_test = frechet_loop(f, eigs, Ψ, hs)
-        fd = mat_fun_frechet(f, eigs, Ψ, hs)
+        DD_F = DD_tensor(f, eigs, order)
+        fd_test = frechet_loop(DD_F, Ψ, hs)
+        fd = mat_fun_frechet(DD_F, Ψ, hs)
         @test isapprox(fd_test, fd)
     end
 end
@@ -82,9 +82,11 @@ end
     H = P * Diagonal(D) * inv(P)
     eigs, Ψ = eigen(H)
     for order in 1:4
-        h = [rand(10, 10) for i = 1:order]
-        fd_test = frechet_loop(f, eigs, Ψ, h)
-        fd = mat_fun_frechet(f, eigs, Ψ, h)
+        h = [rand(N, N) for i = 1:order]
+        hs = [0.5 * (x + x') for x in h]
+        DD_F = DD_tensor(f, eigs, order)
+        fd_test = frechet_loop(DD_F, Ψ, hs)
+        fd = mat_fun_frechet(DD_F, Ψ, hs)
         @test isapprox(fd_test, fd)
     end
 end

@@ -1,12 +1,16 @@
 name: CompatHelper
+
 on:
   schedule:
-    - cron: 0 4 * * 6
-  workflow_dispatch:
+    - cron: '00 00 * * *'
+
 jobs:
   CompatHelper:
     runs-on: ubuntu-latest
     steps:
+      - uses: julia-actions/setup-julia@latest
+        with:
+          version: '1'
       - name: Pkg.add("CompatHelper")
         run: julia -e 'using Pkg; Pkg.add("CompatHelper")'
       - name: CompatHelper.main()

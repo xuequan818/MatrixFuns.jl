@@ -1,3 +1,5 @@
+const RealOrComplex = Union{Real,Complex}
+
 include("split.jl")
 include("reorder_schur.jl")
 include("atomic_block_fun.jl")
@@ -33,14 +35,16 @@ E.g., for the `sign` function, users can customize the color mapping using
 
 `ε` the default error.
 
+`ε_im` the default error for the imaginary part of f(A) (used for complex Schur decomposition).
+
 `checknative` check `f` is a Julia native function.
 """
 function mat_fun(f::Function, A::AbstractMatrix{TT};               
                  sep=0.1, max_deg=250, 
                  tol_taylor=100eps(real(float((TT)))),
                  scale=1.0, color::Function=(x->1), 
-                 ε=eps(real(float((TT)))), 
-                 checknative=native(f)) where {TT<:Number}      
+                 ε=eps(real(float((TT)))), ε_im=tol_taylor,
+                 checknative=native(f)) where {TT<:RealOrComplex}      
     n = checksquare(A)
 
     if checknative
@@ -64,9 +68,11 @@ function mat_fun(f::Function, A::AbstractMatrix{TT};
     end
     
     # Schur decomposition of A
+    sflag = 0
     S = schur(A)
     if !istriu(S.T)
         S = Schur{Complex}(schur(A))
+        sflag = 1
     end
     T, Z, Λ = S
 
@@ -88,7 +94,14 @@ function mat_fun(f::Function, A::AbstractMatrix{TT};
         F = block_parlett_recurrence(f, S.T, block; max_deg, tol_taylor, checknative)
     end
 
-    return S.Z * F * S.Z'
+    FA = S.Z * F * S.Z'
+    if isone(sflag)
+        if TT <: Real && Base.return_types(f, Tuple{TT})[1] <: Real
+            (norm(imag(FA)) < ε_im) && (FA = real(FA))
+        end
+    end
+
+    return FA
 end
 
 diag_mat_fun(f::Function, Λ, P) = P * Diagonal(elem_fun(f, Λ)) * P'
