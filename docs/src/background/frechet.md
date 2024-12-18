@@ -111,3 +111,22 @@ and permute such that the $0$-dimension is at the end $\mathfrak{F}^{2,…,n,0}$
 \mathfrak{F}^{m,…,n,0}_{:,j_m,…,j_n} = ∑_{i=1}^N (h_m ∘ \mathfrak{F}^{m-1,…,n,0}_{:,:,j_m,…,j_n})_{i,:}
 ```
 and $F_n = (\mathfrak{F}^{n,0})^T$.
+
+## Adjoint
+Since $H$ is Hermitian, $\Phi^{-1}=\Phi^{\rm H}$. Denote the first order Fréchet derivative by $\dot{F}=\Phi(\Lambda^{0,1} ∘\Phi^{\rm H} \dot{H}\Phi)\Phi^{\rm H}$, by
+```math 
+\begin{align*}
+  {\rm Re}\langle\overline{F},\dot{F}\rangle&={\rm Re}\langle\overline{F},\Phi(\Lambda^{0,1} ∘\Phi^{\rm H} \dot{H}\Phi)\Phi^{\rm H}\rangle\\
+    &={\rm Re}\langle\Phi^{\rm H}\overline{F}\Phi,\Lambda^{0,1} ∘\Phi^{\rm H} \dot{H}\Phi\rangle\\
+    &={\rm Re}\langle\Phi^{\rm H}\overline{F}\Phi ∘(\Lambda^{0,1})^{\rm H}, \Phi^{\rm H} \dot{H}\Phi\rangle\\
+    &={\rm Re}\langle\Phi(\Phi^{\rm H}\overline{F}\Phi ∘(\Lambda^{0,1})^{\rm H})\Phi^{\rm H}, \dot{H}\rangle\\
+    &={\rm Re}\langle\overline{H},\dot{H}\rangle,
+\end{align*}
+```
+we have the adjoint 
+```math
+\overline{H} = \Phi(\Phi^{\rm H}\overline{F}\Phi ∘(\Lambda^{0,1})^{\rm H})\Phi^{\rm H}.
+```
+
+
+
