@@ -2,8 +2,8 @@ module DivDiffConvergence
 
 using Test
 using MatrixFuns
-using DiffTests
 using ForwardDiff
+using DiffTests
 
 # compute the n-th order derivative
 function nth_derivative(f::Function, x::Number, n::Integer)
