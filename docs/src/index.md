@@ -4,14 +4,8 @@ A Julia package for computing scalar functions of matrix variables and their FrÃ
 
 ---
 ## Installation
-`MatrixFuns` is currently an unregistered package and therefore needs to be downloaded or cloned to the user's local computer first, and then installed by running
-
 ```julia
-julia> cd("your-local-path/MatrixFuns.jl")
-
 julia> using Pkg
 
-julia> Pkg.activate(".")
-
-julia> Pkg.instantiate()
+julia> Pkg.add("MatrixFuns")
 ```
