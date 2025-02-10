@@ -19,8 +19,6 @@ affiliations:
    index: 2
 date: 18 November 2024
 bibliography: paper.bib
-header-includes:
-  - \usepackage{algorithm2e}
 ---
 
 # Summary
