@@ -43,10 +43,10 @@ In MATLAB, the [funm](https://www.mathworks.com/help/symbolic/sym.funm.html) fun
 In particular, to handle discontinuous or singular functions, we employ an adaptive splitting strategy:
 ![Splitting strategy](split.png)
 Here, the color mapping $\mathfrak{c}:\mathbb{C}\to\mathbb{Z}$ assigns an integer to each eigenvalue, and eigenvalues with the same integer will be split together. The separation parameter $\delta$ enusures that eigenvalue partitions satisfy the following conditions:
-* Separation between blocks: $\min\big\{|\lambda_i -\lambda_j| : \lambda_i\in \Lambda_i,\, \lambda_j\in \Lambda_j,\, i\neq j\big\}>\delta$.
-* Separation within blocks: for $\#\Lambda_i> 1$, $\forall \lambda\in \Lambda_i$, $\exists \mu\in \Lambda_i$ and $\mu \neq \lambda$, s.t. $|\lambda - \mu| \leq \delta$.
+* Separation between blocks: $\min\{|\lambda_i -\lambda_j| : \lambda_i\in \Lambda_i,\, \lambda_j\in \Lambda_j,\, i\neq j\}>\delta$.
+* Separation within blocks: for ${\rm card}(\Lambda_i)> 1$, $\forall \lambda\in \Lambda_i$, $\exists \mu\in \Lambda_i$ and $\mu \neq \lambda$, s.t. $|\lambda - \mu| \leq \delta$.
   
-Let $\Delta:=\max\big\{|\lambda -\mu| : \lambda,\,\mu\in \Lambda_i\big\}$ be the spread of $\Lambda_i$, $M$ be the maximum Taylor series order, $\alpha$ be the scaling of the Talyor series error, and $\varepsilon$ be the tolerance. We stop the split until 
+Let $\Delta:=\max\{|\lambda -\mu| : \lambda,\,\mu\in \Lambda_i\}$ be the spread of $\Lambda_i$, $M$ be the maximum Taylor series order, $\alpha$ be the scaling of the Talyor series error, and $\varepsilon$ be the tolerance. We stop the split until 
 ```math
 \bigg(\frac{\Delta}{\alpha}\bigg)^{M+1} \leq \frac{\varepsilon}{\delta},
 ```
