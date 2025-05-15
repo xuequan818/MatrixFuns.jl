@@ -35,7 +35,7 @@ MappedArrays = "0.4"
 PermutationSymmetricTensors = "0.2"
 SpecialFunctions = "2"
 StaticArrays = "1"
-TaylorSeries = "0.18"
+TaylorSeries = "0.18, 0.20"
 julia = "1.10"
 
 [extras]
