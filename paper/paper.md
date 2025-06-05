@@ -17,7 +17,7 @@ affiliations:
    index: 1
  - name: School of Mathematical Sciences, Beijing Normal University
    index: 2
-date: 21 May 2025
+date: 5 June 2025
 bibliography: paper.bib
 ---
 
