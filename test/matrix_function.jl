@@ -24,7 +24,7 @@ end
         P = rand(n, n)
         A = P * Diagonal(D) * inv(P)
         ref = P * Diagonal(f.(D)) * inv(P)
-        result = mat_fun(f, A; scale=0.01, checknative=false, color)
+        result = mat_fun(f, A; scale=0.001, checknative=false, color)
         @test isapprox(ref, result)
     end
 end
@@ -39,7 +39,7 @@ end
 		P = rand(n,n)
 		A = P * Diagonal(D) * inv(P)
 		ref = P * Diagonal(sign.(D)) * inv(P)
-		result = mat_fun(sign, A; sep=Inf, color)
+		result = mat_fun(sign, A; color)
 		@test isapprox(ref, result)
 	end
 end
@@ -55,7 +55,7 @@ end
         P = rand(n, n)
         A = P * Diagonal(D) * inv(P)
         ref = P * Diagonal(heaviside.(D)) * inv(P)
-        result = mat_fun(heaviside, A; sep=Inf, color)      
+        result = mat_fun(heaviside, A; color)      
         @test isapprox(ref, result)
     end
 end

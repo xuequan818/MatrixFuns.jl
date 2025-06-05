@@ -5,6 +5,6 @@
 /docs/Manifest.toml
 /docs/build/
 /not_needed
-/xq.jl
+/xq
 /test_study
 *.DS_Store

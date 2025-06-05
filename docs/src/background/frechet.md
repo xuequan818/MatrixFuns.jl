@@ -1,70 +1,70 @@
 # Fréchet derivative 
 
 ## Contour integral form
-Let $\mathcal{H}:=\mathbb{C}^{N\times N}_{\rm herm}$ be the vector space of $N\times N$ Hermitian matrices. For $H\in\mathcal{H}$ and $h_1,...h_n\in\mathcal{H}$, and $f$ is an $n$ times continuously differentiable function on a subset of $\mathbb{C}$ containing the spectrum of $H+t_1h_1+\cdots + t_nh_n$, the $n$-th order Fréchet derivative of $f(H)$ is
+Let $A\in \mathbb{C}^{n\times n}$ be a Hermitian matrix, $H_1, \dots, H_N$ be a set of Hermitian variations, and $f$ be an $N$ times continuously differentiable function on a subset of $\mathbb{C}$ containing the spectrum of $A+t_1H_1+\cdots + t_NH_N$, the $N$-th order Fréchet derivative of $f(A)$ is
 ```math
 \begin{align*}
-    &{{\rm d}}^{n}f(H)h_1\cdots h_n =\\ &\frac{1}{2\pi i}\oint_\mathcal{C} f(z) \sum_{p\in\mathcal{P}_n}(z-H)^{-1}h_{p(1)}(z-H)^{-1}\cdots(z-H)^{-1}h_{p(n)}(z-H)^{-1}\; dz,
+    &{{\rm d}}^{N}f(A)H_1\cdots H_N =\\ &\frac{1}{2\pi i}\oint_\mathcal{C} f(z) \sum_{p\in\mathcal{P}_N}(z-A)^{-1}H_{p(1)}(z-A)^{-1}\cdots(z-A)^{-1}H_{p(N)}(z-A)^{-1}\; dz,
 \end{align*}
 ```
-where $\mathcal{C}$ is a contour in the complex plane enclosing all the eigenvalues of $H$, and $p\in\mathcal{P}_n$ is an arbitrary permutation of $\{1,\cdots,n\}$. This can be proved by induction.
+where $\mathcal{C}$ is a contour in the complex plane enclosing all the eigenvalues of $A$, and $p\in\mathcal{P}_N$ is an arbitrary permutation of $\{1,\cdots,N\}$. This can be proved by induction.
 
-For $n = 1$, we have 
+For $N = 1$, we have 
 ```math
 \begin{align*}
-    {\rm d} f(H)h&=\lim_{t\to 0} \frac{f(H+th)-f(H)}{t}\\&=\frac{1}{2\pi i}\oint_\mathcal{C} f(z)\lim_{t\to 0}\frac{(z-H-th)^{-1}-(z-H)^{-1}}{t}\;dz.
+    {\rm d} f(A)H&=\lim_{t\to 0} \frac{f(A+tH)-f(A)}{t}\\&=\frac{1}{2\pi i}\oint_\mathcal{C} f(z)\lim_{t\to 0}\frac{(z-A-tH)^{-1}-(z-A)^{-1}}{t}\;dz.
 \end{align*}
 ```
 Note that
 ```math
 \begin{align*}
-    (z-H-th)^{-1}  &= (I-t(z-H)^{-1}h)^{-1}(z-H)^{-1} \\&= (I+t(z-H)^{-1}h+O(t^2))(z-H)^{-1},
+    (z-A-tH)^{-1}  &= (I-t(z-A)^{-1}H)^{-1}(z-A)^{-1} \\&= (I+t(z-A)^{-1}H+O(t^2))(z-A)^{-1},
 \end{align*}
 ```
 we have 
 ```math
 \begin{align*}
-    {\rm d} f(H)h=\frac{1}{2\pi i}\oint_\mathcal{C} f(z)(z-H)^{-1}h(z-H)^{-1}\;dz,
+    {\rm d} f(A)H=\frac{1}{2\pi i}\oint_\mathcal{C} f(z)(z-A)^{-1}H(z-A)^{-1}\;dz,
 \end{align*}
 ```
 which satisfies the formula.
 
-Assume the $n-1$-th order derivative satisfies the formula. Then we have the $n$-th order derivative
+Assume the $(N-1)$-th order derivative satisfies the formula. Then we have the $N$-th order derivative
 ```math
 \begin{align*}
-    {{\rm d}}^{n}f(H)h_1\cdots h_n &=\lim_{t\to 0} \frac{{{\rm d}}^{n-1}f(H+th_n)h_1\cdots h_{n-1}-{{\rm d}}^{n-1}f(H)h_1\cdots h_{n-1}}{t}\\
-    &=\frac{1}{2\pi i}\oint_\mathcal{C} f(z)\lim_{t\to 0}\sum_{p\in\mathcal{P}_{n-1}}\frac{1}{t}\Big((z-H-th_n)^{-1}h_{p(1)}\cdots h_{p(n-1)}(z-H-th_n)^{-1}\\
-    &\qquad -(z-H)^{-1}h_{p(1)}\cdots h_{p(n-1)}(z-H)^{-1}\Big)\;dz.
+    {{\rm d}}^{N}f(A)H_1\cdots H_N &=\lim_{t\to 0} \frac{{{\rm d}}^{N-1}f(A+tH_N)H_1\cdots H_{N-1}-{{\rm d}}^{N-1}f(A)H_1\cdots H_{N-1}}{t}\\
+    &=\frac{1}{2\pi i}\oint_\mathcal{C} f(z)\lim_{t\to 0}\sum_{p\in\mathcal{P}_{N-1}}\frac{1}{t}\Big((z-A-tH_N)^{-1}H_{p(1)}\cdots H_{p(N-1)}(z-A-tH_N)^{-1}\\
+    &\qquad -(z-A)^{-1}H_{p(1)}\cdots H_{p(N-1)}(z-A)^{-1}\Big)\;dz.
 \end{align*}
 ```
 Similarly, we have
 ```math 
 \begin{align*}
-   (z&-H-th_n)^{-1}h_{p(1)}\cdots h_{p(n-1)}(z-H-th_n)^{-1}\\
-    &=(I+t(z-H)^{-1}h_n)(z-H)^{-1}h_{p(1)}\cdots h_{p(n-1)}(z-H)^{-1}(I+th_n(z-H)^{-1}) + O(t^2)\\
-    &=(z-H)^{-1}h_{p(1)}\cdots h_{p(n-1)}(z-H)^{-1} \\
-    &\quad+ t\Big((z-H)^{-1}h_n(z-H)^{-1}h_{p(1)}\cdots h_{p(n-1)}(z-H)^{-1}\\
-    &\qquad\quad+(z-H)^{-1}h_{p(1)}(z-H)^{-1}h_n\cdots h_{p(n-1)}(z-H)^{-1}\\
-    &\qquad\quad+(z-H)^{-1}h_{p(1)}(z-H)^{-1}h_{p(2)}\cdots h_n(z-H)^{-1}\Big) + O(t^2).
+   (z&-H-tH_N)^{-1}H_{p(1)}\cdots H_{p(N-1)}(z-A-tH_N)^{-1}\\
+    &=(I+t(z-A)^{-1}H_N)(z-A)^{-1}H_{p(1)}\cdots H_{p(N-1)}(z-A)^{-1}(I+tH_N(z-A)^{-1}) + O(t^2)\\
+    &=(z-A)^{-1}H_{p(1)}\cdots H_{p(N-1)}(z-A)^{-1} \\
+    &\quad+ t\Big((z-A)^{-1}H_N(z-A)^{-1}H_{p(1)}\cdots H_{p(N-1)}(z-A)^{-1}\\
+    &\qquad\quad+(z-A)^{-1}H_{p(1)}(z-A)^{-1}H_N\cdots H_{p(N-1)}(z-A)^{-1}\\
+    &\qquad\quad+\cdots+(z-A)^{-1}H_{p(1)}(z-A)^{-1}H_{p(2)}\cdots H_N(z-A)^{-1}\Big) + O(t^2).
 \end{align*}
 ```
-Therefore, we can obtain the formula.
+This completes the proof.
 
 ## Divided difference form
-Let $H=\Phi \Lambda\Phi^{-1}=\sum_i^N\lambda_i\phi_i\phi_i^{-1}$, where $\phi_i$ is the $i$-th column of $\Phi$ and $\phi_i^{-1}$ is the $i$-th row of $\Phi^{-1}$, and assume there is no degeneration. Then for $p\in\mathcal{P}_n$ we have
+Let $\{(\lambda_i,v_i)\}$ be the eigenpairs of $A$, and assume there is no degeneration. Then for $p\in\mathcal{P}_N$, we have
 ```math 
 \begin{align*}
-    (z-&H)^{-1}h_{p(1)}(z-H)^{-1}\cdots(z-H)^{-1}h_{p(n)}(z-H)^{-1}\\
-    &=\sum_{i_0,\cdots,i_{n}=1}^N\phi_{i_0}(h_{p(1)})_{i_0,i_1}\cdots (h_{p(n)})_{i_{n-1},i_n}\phi_{i_{n}}^{-1}(z-\lambda_{i_0})^{-1}\cdots (z-\lambda_{i_{n}})^{-1},
+    (z-&A)^{-1}H_{p(1)}(z-A)^{-1}\cdots(z-A)^{-1}H_{p(N)}(z-A)^{-1}\\
+    &=\sum_{i_0,\cdots,i_N=1}^nv_{i_0}(H_{p(1)})_{i_0,i_1}\cdots (H_{p(N)})_{i_{N-1},i_N}v_{i_N}^*(z-\lambda_{i_0})^{-1}\cdots (z-\lambda_{i_N})^{-1},
 \end{align*}
 ```
-where $(h_{p(k)})_{i,j}=\phi_i^{-1}h_{p(k)}\phi_j$. We let
+where $(H_{p(k)})_{i,j}=v_i^*H_{p(k)}v_j$. Let
 ```math 
-    (z-\lambda_{i_0})^{-1}\cdots (z-\lambda_{i_{n}})^{-1} = \sum_{k=0}^{n}C_k (z-\lambda_{i_k})^{-1},
+    (z-\lambda_{i_0})^{-1}\cdots (z-\lambda_{i_N})^{-1} = \sum_{k=0}^{N}C_k (z-\lambda_{i_k})^{-1},
 ```
-then
+then we have
 ```math 
-\sum_{k=0}^{n}C_k \prod_{\ell\neq k}(z-\lambda_{i_\ell})=1.
+\sum_{k=0}^{N}C_k \prod_{\ell\neq k}(z-\lambda_{i_\ell})=1.
 ```
 Let $z=\lambda_{i_k}$, we can obtain
 ```math 
@@ -73,59 +73,60 @@ C_k = \frac{1}{\prod_{\ell\neq k}(\lambda_{i_k}-\lambda_{i_\ell})}.
 Therefore, we have
 ```math 
 \begin{align*}
-    \frac{1}{2\pi i}\oint_\mathcal{C} f(z)(z-\lambda_{i_0})^{-1}\cdots (z-\lambda_{i_{n}})^{-1}\;dz = \sum_{k=0}^{n}\frac{f(\lambda_{i_k})}{\prod_{\ell\neq k}(\lambda_{i_k}-\lambda_{i_\ell})}=f[\lambda_{i_0},\cdots,\lambda_{i_{n}}].
+    \frac{1}{2\pi i}\oint_\mathcal{C} f(z)(z-\lambda_{i_0})^{-1}\cdots (z-\lambda_{i_N})^{-1}\;dz = \sum_{k=0}^{N}\frac{f(\lambda_{i_k})}{\prod_{\ell\neq k}(\lambda_{i_k}-\lambda_{i_\ell})}=f[\lambda_{i_0},\cdots,\lambda_{i_N}].
 \end{align*}
 ```
 Finally, we obtain
 ```math 
 \begin{equation}
-    {{\rm d}}^{n}f(H)h_1\cdots h_n =\sum_{i_0,\cdots,i_{n}=1}^N\phi_{i_0}\Bigg(\sum_{p\in\mathcal{P}_n}(h_{p(1)})_{i_0,i_1}\cdots (h_{p(n)})_{i_{n-1},i_{n}}\Bigg)f[\lambda_{i_0},\cdots,\lambda_{i_{n}}]\phi_{i_{n}}^{-1},
+    {{\rm d}}^{N}f(A)H_1\cdots H_N =\sum_{i_0,\cdots,i_N=1}^nv_{i_0}\Bigg(\sum_{p\in\mathcal{P}_N}(H_{p(1)})_{i_0,i_1}\cdots (H_{p(N)})_{i_{N-1},i_N}\Bigg)f[\lambda_{i_0},\cdots,\lambda_{i_N}]v_{i_N}^*,
 \end{equation}
 ```
 which can be also written as 
 ```math 
 \begin{equation}
-(\Phi^{-1}[{{\rm d}}^{n}f(H)h_1\cdots h_n]\Phi)_{k\ell}=\sum_{i_1,\cdots,i_{n-1}=1}^N\Bigg(\sum_{p\in\mathcal{P}_n}(h_{p(1)})_{k,i_1}\cdots (h_{p(n)})_{i_{n-1},\ell}\Bigg)f[\lambda_k,\lambda_{i_1},\cdots,\lambda_{i_{n-1}},\lambda_\ell].
+(U^*[{{\rm d}}^{N}f(A)H_1\cdots H_N]U)_{k\ell}=\sum_{i_1,\cdots,i_{N-1}=1}^n\Bigg(\sum_{p\in\mathcal{P}_N}(H_{p(1)})_{k,i_1}\cdots (H_{p(N)})_{i_{N-1},\ell}\Bigg)f[\lambda_k,\lambda_{i_1},\cdots,\lambda_{i_{N-1}},\lambda_\ell],
 \end{equation}
 ```
+where $U=(v_1,\cdots,v_n)$.
 
 ## Array operations
 Use array operations to efficiently compute the Fréchet derivative. For simplicity, just consider the no permutation case and define
 ```math
-(F_n)_{kℓ}:=∑_{i_1,⋯,i_{n-1}=1}^N(h_1)_{k,i_1}⋯ (h_n)_{i_{n-1},ℓ}Λ^{0,1,…,n-1,n}_{k,i_1,…,i_{n-1},ℓ},
+(F_N)_{kℓ}:=∑_{i_1,⋯,i_{N-1}=1}^n(H_1)_{k,i_1}⋯ (H_N)_{i_{N-1},ℓ}Λ^{0,1,…,N-1,N}_{k,i_1,…,i_{N-1},ℓ},
 ```
-where $Λ^{0,…,n}_{i_0,…,i_n} := f[λ_{i_0},⋯,λ_{i_n}]$. It is immediately to obtain that 
+where $Λ^{0,…,N}_{i_0,…,i_N} := f[λ_{i_0},⋯,λ_{i_N}]$. It is immediately to obtain that 
 ```math
-F_1 =  h_1 ∘ Λ^{0,1},
+F_1 =  H_1 ∘ Λ^{0,1},
 ```
 and 
 ```math
-F_2 = ∑_{i=1}^N (\mathfrak{h}^{1,2} ∘ Λ^{0,1,2})_{:,i,:},
+F_2 = ∑_{i=1}^n (\mathfrak{H}^{1,2} ∘ Λ^{0,1,2})_{:,i,:},
 ```
- with $\mathfrak{h}^{1,2}_{:,i,:} := (h_1)_{:,i}(h_2)_{i,:}$. For $n ≥ 3$, first compute 
+ with $\mathfrak{H}^{1,2}_{:,i,:} := (H_1)_{:,i}(H_2)_{i,:}$. For $N ≥ 3$, first compute 
 ```math
-\mathfrak{F}^{0,2,…,n}_{:,:,j_3,…,j_n} := ∑_{i=1}^N (\mathfrak{h}^{1,2} ∘ Λ^{0,1,…,n}_{:,:,:,j_3,…,j_n})_{:,i,:}
+\mathfrak{F}^{0,2,…,N}_{:,:,j_3,…,j_N} := ∑_{i=1}^n (\mathfrak{H}^{1,2} ∘ Λ^{0,1,…,N}_{:,:,:,j_3,…,j_N})_{:,i,:}
 ```
-and permute such that the $0$-dimension is at the end $\mathfrak{F}^{2,…,n,0}$. Then for $m ≥ 3$, there is the recursion
+and permute such that the $0$-dimension is at the end $\mathfrak{F}^{2,…,N,0}$. Then for $M ≥ 3$, there is the recursion
 ```math
-\mathfrak{F}^{m,…,n,0}_{:,j_m,…,j_n} = ∑_{i=1}^N (h_m ∘ \mathfrak{F}^{m-1,…,n,0}_{:,:,j_m,…,j_n})_{i,:}
+\mathfrak{F}^{M,…,N,0}_{:,j_M,…,j_N} = ∑_{i=1}^N (H_M ∘ \mathfrak{F}^{M-1,…,N,0}_{:,:,j_M,…,j_N})_{i,:}
 ```
-and $F_n = (\mathfrak{F}^{n,0})^T$.
+and $F_N = (\mathfrak{F}^{N,0})^T$.
 
 ## Adjoint
-Since $H$ is Hermitian, $\Phi^{-1}=\Phi^{\rm H}$. Denote the first order Fréchet derivative by $\dot{F}=\Phi(\Lambda^{0,1} ∘\Phi^{\rm H} \dot{H}\Phi)\Phi^{\rm H}$, by
+Denote the first order Fréchet derivative by $\dot{F}= U(\Lambda^{0,1} ∘ U^* \dot{H} U) U^*$, by
 ```math 
 \begin{align*}
-  {\rm Re}\langle\overline{F},\dot{F}\rangle&={\rm Re}\langle\overline{F},\Phi(\Lambda^{0,1} ∘\Phi^{\rm H} \dot{H}\Phi)\Phi^{\rm H}\rangle\\
-    &={\rm Re}\langle\Phi^{\rm H}\overline{F}\Phi,\Lambda^{0,1} ∘\Phi^{\rm H} \dot{H}\Phi\rangle\\
-    &={\rm Re}\langle\Phi^{\rm H}\overline{F}\Phi ∘(\Lambda^{0,1})^{\rm H}, \Phi^{\rm H} \dot{H}\Phi\rangle\\
-    &={\rm Re}\langle\Phi(\Phi^{\rm H}\overline{F}\Phi ∘(\Lambda^{0,1})^{\rm H})\Phi^{\rm H}, \dot{H}\rangle\\
+  {\rm Re}\langle\overline{F},\dot{F}\rangle&={\rm Re}\langle\overline{F}, U(\Lambda^{0,1} ∘ U^* \dot{H} U) U^*\rangle\\
+    &={\rm Re}\langle U^*\overline{F} U,\Lambda^{0,1} ∘ U^* \dot{H} U\rangle\\
+    &={\rm Re}\langle U^*\overline{F} U ∘(\Lambda^{0,1})^*,  U^* \dot{H} U\rangle\\
+    &={\rm Re}\langle U( U^*\overline{F} U ∘(\Lambda^{0,1})^*) U^*, \dot{H}\rangle\\
     &={\rm Re}\langle\overline{H},\dot{H}\rangle,
 \end{align*}
 ```
 we have the adjoint 
 ```math
-\overline{H} = \Phi(\Phi^{\rm H}\overline{F}\Phi ∘(\Lambda^{0,1})^{\rm H})\Phi^{\rm H}.
+\overline{H} =  U( U^*\overline{F} U ∘(\Lambda^{0,1})^*) U^*.
 ```
 
 

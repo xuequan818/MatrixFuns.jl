@@ -2,6 +2,12 @@
     atomic_block_fun!(f, F, A; max_deg, tol_taylor, checknative)
 
 Implement the atomic block computation `f(A)`, and overwriting the values of `F`.
+
+`max_deg` the maximum Taylor series order for the diagonal blocks computation.
+
+`tol_taylor` the termination tolerance for evaluating the Taylor series of diagonal blocks.
+
+`checknative` check `f` is a Julia native function.
 """
 function atomic_block_fun!(f::Function, F::AbstractMatrix,
                            A::AbstractMatrix; max_deg=250,
@@ -83,7 +89,7 @@ end
 Implement the atomic block computation `f(A)`.
 """
 function atomic_block_fun(f, A; kwargs...)
-    T = promote_type(eltype(A), typeof(f(A[1])))
+    T = promote_type(eltype(A), eltype(f(A[1])))
     F = fill!(similar(A, T), 0)
     atomic_block_fun!(f, F, A; kwargs...)
 end
@@ -205,22 +211,28 @@ end
 @inline x_factorial(x, n, m) = exp(log(x) - logfactorial(m) + logfactorial(n))
 
 ## Compute f.(A)
-function elem_fun!(f::Function, F::AbstractArray, A::AbstractArray)
+function elem_fun!(f::Function, F::AbstractArray, 
+                   A::AbstractArray{TA}; 
+                   Tf=typeof(f(one(TA)))) where {TA<:RealOrComplex}
     @assert size(F) == size(A)
+
+    newf(x) = Tf <: UniformScaling ? f(x).λ : f(x)
+
     try
-        @. F = f(A)
+        @. F = newf(A)
     catch e
         if isa(e, DomainError)
             (eltype(F) <: Complex) || (F = complex.(F))
-            @. F = f(complex(A))
+            @. F = newf(complex(A))
         else
             throw(e)
         end
     end
 end
 
-function elem_fun(f, A)
-    T = promote_type(eltype(A), typeof(f(A[1])))
+function elem_fun(f, A::AbstractArray{TA}) where {TA<:RealOrComplex}
+    Tf = typeof(f(one(TA)))
+    T = promote_type(TA, eltype(Tf))
     F = fill!(similar(A, T), 0)
-    elem_fun!(f, F, A)
+    elem_fun!(f, F, A; Tf)
 end

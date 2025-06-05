@@ -33,7 +33,7 @@ function block_parlett_recurrence(f::Function, T::AbstractMatrix,
                                   block::Vector{UnitRange{Int}}; kwargs...)                                
     @assert istriu(T)
 
-    F = fill!(similar(T, float(typeof(f(T[1])))), 0)
+    F = fill!(similar(T, float(eltype(f(T[1])))), 0)
     @views for (j, jb) in enumerate(block)
         Tjj = T[jb, jb]
         Fjj = F[jb, jb]

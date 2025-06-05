@@ -6,7 +6,7 @@ include("atomic_block_fun.jl")
 include("parlett_recurrence.jl")
 
 """
-    mat_fun(f, A; sep, max_deg, scale, color, ε, checknative)
+    mat_fun(f, A; scale, sep, max_deg, color, ε, checknative)
 
 Compute the matrix-variable function `f(A)`. Return a matrix.
 
@@ -14,17 +14,16 @@ Compute the matrix-variable function `f(A)`. Return a matrix.
 
 `A` an arbitrary square matrix.
 
+`scale` the scaling of the Talyor series error, is used to control the spread of each splitting cluster.
+By default, `scale = 1`.
+
 `sep` the initial separation distance, to split the eigenvalues of `A` into clusters that satisfy
 (i) min{|λ - μ|: λ ∈ cl_p, μ ∈ cl_q, p ≠ q} > sep.		
 (ii) for cl_p with |cl_p| > 1, ∀ λ ∈ cl_p, ∃ μ ∈ cl_p and μ ≠ λ, s.t. |λ - μ| ≤ sep. 
 Here cl_p is the cluster with index p.
-When `sep=Inf`, the eigenvalues are only split by `color`.
+By default, `sep = 0.1*scale`.
 
 `max_deg` the maximum Taylor series order for the diagonal blocks computation.
-
-`tol_taylor` the termination tolerance for evaluating the Taylor series of diagonal blocks.
-
-`scale` the scaling of the Talyor series error, is used to control the spread of each splitting cluster. When `scale=Inf`, split the eigenvalues only once with `sep`.
 
 `color(x::Number)::Integer` an index mapping function. 
 This is to ensure all eigenvalues within a cluster have the same color index. 
@@ -33,17 +32,14 @@ For discontinuous functions, users can assign a distinct color to each continuou
 E.g., for the `sign` function, users can customize the color mapping using 
 `color = x -> Int(real(sign(x)))`
 
-`ε` the default error.
-
-`ε_im` the default error for the imaginary part of f(A) (used for complex Schur decomposition).
+`ε` the target accuracy, set to machine accuracy by default.
 
 `checknative` check `f` is a Julia native function.
 """
 function mat_fun(f::Function, A::AbstractMatrix{TT};               
-                 sep=0.1, max_deg=250, 
-                 tol_taylor=100eps(real(float((TT)))),
-                 scale=1.0, color::Function=(x->1), 
-                 ε=eps(real(float((TT)))), ε_im=tol_taylor,
+                 scale=1.0, sep=0.1scale, max_deg=250, 
+                 color::Function=(x->1), 
+                 ε=eps(real(float((TT)))), 
                  checknative=native(f)) where {TT<:RealOrComplex}      
     n = checksquare(A)
 
@@ -83,7 +79,7 @@ function mat_fun(f::Function, A::AbstractMatrix{TT};
 
     # split the eigenvalues into clusters
     split_map = get_splittings(Λ; sep, max_deg, scale, color, ε, checknative)
-       
+
     # compute f(T)
     if maximum(split_map) == n
         F = parlett_recurrence(f, T)
@@ -91,13 +87,13 @@ function mat_fun(f::Function, A::AbstractMatrix{TT};
         F = atomic_block_fun(f, T; max_deg, checknative)
     else
         S, block = reorder_schur(S, split_map)
-        F = block_parlett_recurrence(f, S.T, block; max_deg, tol_taylor, checknative)
+        F = block_parlett_recurrence(f, S.T, block; max_deg, tol_taylor=100ε, checknative)
     end
 
     FA = S.Z * F * S.Z'
     if isone(sflag)
         if TT <: Real && Base.return_types(f, Tuple{TT})[1] <: Real
-            (norm(imag(FA)) < ε_im) && (FA = real(FA))
+            (norm(imag(FA)) < 100ε) && (FA = real(FA))
         end
     end
 
@@ -107,7 +103,7 @@ end
 diag_mat_fun(f::Function, Λ, P) = P * Diagonal(elem_fun(f, Λ)) * P'
 
 # Check `f` is a Julia native function
-const NATIVE_TEST_MAT = SDiagonal{2}(I)
+const NATIVE_TEST_MAT = @MArray ones(1, 1)
 
 function native(f::Function)
     try

@@ -36,7 +36,7 @@ end
     for i = 1:N
         x = X[1:i]
         dd_def = div_diff_def(f, x)
-        dd_table = div_diff(f, x; scale=0.01, color)
+        dd_table = div_diff(f, x; color)
         @test isapprox(dd_def, dd_table)
     end
 end
@@ -47,7 +47,7 @@ end
     for i = 1:N
         x = X[1:i]
         dd_def = div_diff_def(f, x)
-        dd_table = div_diff(f, x; sep=Inf, color)
+        dd_table = div_diff(f, x; color)
         @test isapprox(dd_def, dd_table)
     end
 end
@@ -58,7 +58,7 @@ end
     for i = 1:N
         x = X[1:i]
         dd_def = div_diff_def(heaviside, x)
-        dd_table = div_diff(heaviside, x; sep=Inf, color)
+        dd_table = div_diff(heaviside, x; color)
         @test isapprox(dd_def, dd_table)
     end
 end

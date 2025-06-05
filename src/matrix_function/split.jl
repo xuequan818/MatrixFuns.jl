@@ -22,13 +22,6 @@ function get_splittings(pts::Vector{T}; sep=0.1,
         return asgmt
     end
 
-    if isinf(sep)
-        @views for (i, ir) in enumerate(clrng)
-            fill!(asgmt[clsp[ir]], i)
-        end
-        return asgmt
-    end
-
     # Split each color cluster by separation 
     min_ind = 1
     @views for ir in clrng
@@ -56,10 +49,6 @@ function _get_splittings(pts::AbstractVector{T},
 
     asgmt, clsp, clrng = split_by_sep(pts, δ) # asgmt[clsp[clrng[i]]] .== i
     @. asgmt += (min_ind - 1)
-    
-    if isinf(scale)
-        return asgmt
-    end
 
     if !isnothing(clrng)
         @views for ir in clrng
@@ -167,13 +156,15 @@ function get_dist_vec(pts::AbstractVector{<:Real})
         pts = pts[sp]
     end
     @views dist = pts[1:end-1] - pts[2:end]
+    @. dist = round(dist, digits=15)
 
     return dist, sp, decrease
 end
 
 function get_dist_mat(px::AbstractVector{T}, 
                       py::AbstractVector{T}) where {T<:Number}
-    map(x -> norm(x[1] - x[2]), Iterators.product(px, py))
+    dist = map(x -> norm(x[1] - x[2]), Iterators.product(px, py))
+    @. dist = round(dist, digits=15)
 end
 get_dist_mat(pts::AbstractVector{<:Number}) = get_dist_mat(pts, pts)
 
@@ -193,7 +184,7 @@ end
 """
 Find the spread of the data points (eigenvalues).
 """
-get_spread(pts::AbstractVector{<:Real}) = maximum(pts) - minimum(pts)
+get_spread(pts::AbstractVector{<:Real}) = round(maximum(pts) - minimum(pts), digits=15)
 get_spread(pts::AbstractVector{<:Complex}) = maximum(get_dist_mat(pts))
 get_spread(pts::T) where {T<:Number} = zero(real(T))
 

@@ -23,11 +23,11 @@ Let $\widetilde{T}=U^*TU=(\widetilde{T}_{ij})$ be the reordered upper triangular
 * separation between blocks: $\min\big\{|\lambda -\mu| : \lambda\in \Lambda(\widetilde{T}_{ii}),\, \mu\in \Lambda(\widetilde{T}_{jj}),\, i\neq j\big\}>\delta$,
 * separation within blocks: for $\widetilde{T}_{ii}\in\mathbb{C}^{m\times m}$ with $m>1$, $\forall λ \in \widetilde{T}_{ii}$, $\exists μ ∈ \widetilde{T}_{ii}$ and $μ ≠ λ$, s.t. |$λ - μ| ≤ \delta$.
 
-Here, $\delta>0$ is a splitting tolerance. The second condition can easily lead to large blocks, which destabilizes the atomic block computation based on Taylor expansion. Let $\Delta:=\max\big\{|\lambda -\mu| : \lambda,\,\mu\in \Lambda(\widetilde{T}_{ii})\big\}$ be the spread of the block $\widetilde{T}_{ii}$, $N$ be the maximum Taylor series order, and $\alpha$ be the scaling of the Talyor series error. We split the large block with smaller $\delta$ until 
+Here, $\delta>0$ is a splitting tolerance. The second condition can easily lead to large blocks, which destabilizes the atomic block computation based on Taylor expansion. Let $\Delta:=\max\big\{|\lambda -\mu| : \lambda,\,\mu\in \Lambda(\widetilde{T}_{ii})\big\}$ be the spread of the block $\widetilde{T}_{ii}$, $M$ be the maximum Taylor series order, and $\alpha$ be the scaling of the Talyor series error. We split the large block with smaller $\delta$ until 
 ```math
-\bigg(\frac{\Delta}{\alpha}\bigg)^{N+1} \leq \frac{\varepsilon}{\delta},
+\bigg(\frac{\Delta}{\alpha}\bigg)^{M+1} \leq \frac{\varepsilon}{\delta},
 ```
-where the left side is the Taylor expansion error and the right side is the splitting error. This condition reduces to $\Delta < \alpha$ when $N=\infty$. Note that the scaling $\alpha$ depends on the smoothness of $f$ in the convex sets containing $ \Lambda(\widetilde{T}_{ii})$. 
+where the left side is the Taylor expansion error and the right side is the splitting error. This condition reduces to $\Delta < \alpha$ when $M=\infty$. Note that the scaling $\alpha$ depends on the smoothness of $f$ in the convex sets containing $ \Lambda(\widetilde{T}_{ii})$. 
 
 Additionally, in order to deal with discontinuous functions, we also use a color mapping $\mathfrak{c}: \mathbb{{C}} \to \mathbb{Z}$ so that eigenvalues from different continuous intervals are not split together. For example, consider the Heaviside step function $H(x)=\pmb{1}_{x\geq 0}$, the color mapping can be defined as 
 ```math

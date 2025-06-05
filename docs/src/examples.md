@@ -89,7 +89,7 @@ julia> mat_fun_frechet(f2, X, hs)
 
 julia> ## returns the correct result for smaller `scale`
 
-julia> scale = 0.01;
+julia> scale = 0.001;
 
 julia> color1(x) = x < 1.15 ? 1 : 2;
 
@@ -142,25 +142,4 @@ julia> mat_fun(g, B; color) # returns the correct result
  0.0499792  10.6305   -52.6235
  0.0         1.11303    0.10575
  0.0         0.0        1.1236
-```
-
-Specially, for constant functions, or piecewise functions consisting of constant intervals, users can further set `sep=Inf` to only split the eigenvalues by `color`, which will be more efficient.
-```julia
-julia> heaviside(x) = x < x0 ? 1 : 0 # Heaviside step function
-
-julia> ## set `checknative=false` to avoid the cost of checking function nativity
-
-julia> @time mat_fun(heaviside, B; color, checknative=false) 
-  0.000099 seconds (100 allocations: 6.422 KiB)
-3×3 Matrix{Float64}:
- 1.0  -10.0  50.0
- 0.0    0.0   0.0
- 0.0    0.0   0.0
-
-julia> @time mat_fun(heaviside, B; color, sep=Inf, checknative=false)
-  0.000087 seconds (87 allocations: 5.641 KiB)
-3×3 Matrix{Float64}:
- 1.0  -10.0  50.0
- 0.0    0.0   0.0
- 0.0    0.0   0.0
 ```

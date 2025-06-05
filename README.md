@@ -63,13 +63,13 @@ julia> mat_fun(erf, A)
 ```
 For singular functions, such as [Fermi-Dirac](https://en.wikipedia.org/wiki/Fermi%E2%80%93Dirac_statistics) functions with temperatures close to 0, user can set a smaller `scale` to reduce the spread of each block to avoid large Taylor expansion errors near the singularities, and can also customize `color` function to avoid the block's spectral range including singularities.
 ```julia
-julia> μ = 1.15
+julia> μ = 1.15 
 
 julia> f(x) = 1/(1+exp(1000*(x-μ))); # Fermi-Dirac function with temperature equal to 1e-3
 
 julia> color(x) = x < μ ? 1 : 2; # use `color` to avoid singularities.
 
-julia> mat_fun(f, A; scale=0.01, color)
+julia> mat_fun(f, A; scale=1/1000, color)
 3×3 Matrix{Float64}:
  1.0  0.0  -50.0
  0.0  1.0  -10.0
@@ -91,13 +91,6 @@ julia> mat_fun_frechet(g, X, hs; color)
  0.00975085  0.0233283  0.0241837
 ```
 
-Specially, for constant functions, or piecewise functions consisting of constant intervals, user can further set `sep=Inf` to only split the eigenvalues by `color`, which will be more efficient.
-```julia
-julia> color(x) = Int(sign(x))
-
-julia> div_diff(sign, -1.1, 0.02, -0.01, 0.3; color, sep=Inf) # returns the 3rd order divided difference sign[-1.1, 0.02, -0.01, 0.3]
--196.12683783190693
-```
 For more details, please see the [documentation](https://xuequan818.github.io/MatrixFuns.jl/dev/).
 
 ## Installation
