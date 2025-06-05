@@ -79,7 +79,7 @@ julia&gt; mat_fun_frechet(f2, X, hs)
 
 julia&gt; ## returns the correct result for smaller `scale`
 
-julia&gt; scale = 0.01;
+julia&gt; scale = 0.001;
 
 julia&gt; color1(x) = x &lt; 1.15 ? 1 : 2;
 
@@ -126,20 +126,4 @@ julia&gt; mat_fun(g, B; color) # returns the correct result
 3×3 Matrix{Float64}:
  0.0499792  10.6305   -52.6235
  0.0         1.11303    0.10575
- 0.0         0.0        1.1236</code></pre><p>Specially, for constant functions, or piecewise functions consisting of constant intervals, users can further set <code>sep=Inf</code> to only split the eigenvalues by <code>color</code>, which will be more efficient.</p><pre><code class="language-julia hljs">julia&gt; heaviside(x) = x &lt; x0 ? 1 : 0 # Heaviside step function
-
-julia&gt; ## set `checknative=false` to avoid the cost of checking function nativity
-
-julia&gt; @time mat_fun(heaviside, B; color, checknative=false) 
-  0.000099 seconds (100 allocations: 6.422 KiB)
-3×3 Matrix{Float64}:
- 1.0  -10.0  50.0
- 0.0    0.0   0.0
- 0.0    0.0   0.0
-
-julia&gt; @time mat_fun(heaviside, B; color, sep=Inf, checknative=false)
-  0.000087 seconds (87 allocations: 5.641 KiB)
-3×3 Matrix{Float64}:
- 1.0  -10.0  50.0
- 0.0    0.0   0.0
- 0.0    0.0   0.0</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../background/limit/">« Limitations</a><a class="docs-footer-nextpage" href="../api/">API »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.8.0 on <span class="colophon-date" title="Monday 10 February 2025 06:08">Monday 10 February 2025</span>. Using Julia version 1.11.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+ 0.0         0.0        1.1236</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../background/limit/">« Limitations</a><a class="docs-footer-nextpage" href="../api/">API »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.11.4 on <span class="colophon-date" title="Thursday 5 June 2025 11:04">Thursday 5 June 2025</span>. Using Julia version 1.11.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
