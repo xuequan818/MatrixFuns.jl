@@ -26,9 +26,9 @@ bibliography: paper.bib
 The computation of matrix functions (i.e., $f(A)$ for $A$ a $n \times n$ matrix and $f : \mathbb{C} \to \mathbb{C}$) and their Fréchet derivatives plays a crucial role in many fields of science [@Higham2008], and in particular in electronic structure calculations within density functional theory and response calculations. For Hermitian $A$, computing $f(A)$ can be done efficiently and stably by diagonalization. In the non-normal case, however, diagonalization is unstable and alternative schemes have to be used. Even in the Hermitian case, the evaluation of Fréchet derivatives requires (high-order) divided differences, which by Opitz's formula [@deBoor2005] is equivalent to the exact computation of $f(A)$ for non-normal $A$.
 
 In this work, we develop `MatrixFuns.jl` a Julia package [@julia] to provide the robust computation of matrix functions for arbitrary square matrices and higher-order Fréchet derivatives for Hermitian matrices. This package is tailored towards high accuracy with relatively small matrices and relatively complicated functions $f$. Our work is based on the Schur-Parlett algorithm [@DaviesHigham03;@HighamMohy10], with the following modifications:
-- It supports functions that are discontinuous, or have sharp variations.
-- It does not require the computation of arbitrary-order derivatives of $f$.
-- It exploits existing special-purpose methods for computing matrix functions (e.g. for functions involving exponentials or logarithms) when they exist.
+* It supports functions that are discontinuous, or have sharp variations.
+* It does not require the computation of arbitrary-order derivatives of $f$.
+* It exploits existing special-purpose methods for computing matrix functions (e.g. for functions involving exponentials or logarithms) when they exist.
 
 
 # Statement of need
@@ -40,15 +40,15 @@ The basic principle of the Schur-Parlett algorithm is as follows. First, one per
 
 Our algorithm attempts to find a partition of the eigenvalues of $A$ (computed using a Schur decomposition) into blocks that are well-separated. The diagonal blocks are then computed using Taylor series, and the Parlett recursion is used to fill out the off-diagonal blocks. The partitioning aims to find small blocks (so that low-order Taylor series can be used) that are well-separated (so that the Parlett recursion is well-conditioned)
 
-To find the partition, we start by partitioning the set of eigenvalues $\Lambda$ into disjoint clusters $\Lambda_i$ such that the distance between two such clusters is at least `sep`, where `sep` is a user-definable parameter. We then check if the partition is acceptable by estimating the error in all the clusters; if the estimated error is acceptable, we accept the partition; if not, we split the unacceptable clusters further by applying the partitioning algorithm recursively to each unacceptable $\Lambda_i$. We estimate the error in a cluster $\Lambda_i$ of diameter $d_i$ as ${\textrm{err}}_i=(\frac{d_i}{\textrm{scale}})^{\textrm{max}\_\textrm{deg}+1}$. We accept a cluster if $\textrm{err}_i < \varepsilon/\textrm{sep}$. This choice is made to balance the error originating from the Taylor expansion within a cluster $\textrm{err}_i$ with the error incurred by the use of the Parlett recursion $\varepsilon/\textrm{sep}$.
+To find the partition, we start by partitioning the set of eigenvalues $\Lambda$ into disjoint clusters $\Lambda_i$ such that the distance between two such clusters is at least ${\rm sep}$, where ${\rm sep}$ is a user-definable parameter. We then check if the partition is acceptable by estimating the error in all the clusters; if the estimated error is acceptable, we accept the partition; if not, we split the unacceptable clusters further by applying the partitioning algorithm recursively to each unacceptable $\Lambda_i$. We estimate the error in a cluster $\Lambda_i$ of diameter $d_i$ as ${\textrm{err}}_i=(\frac{d_i}{\textrm{scale}})^{\textrm{max}\_\textrm{deg}+1}$. We accept a cluster if $\textrm{err}_i < \varepsilon/\textrm{sep}$. This choice is made to balance the error originating from the Taylor expansion within a cluster $\textrm{err}_i$ with the error incurred by the use of the Parlett recursion $\varepsilon/\textrm{sep}$.
 
 Therefore, our algorithm has the following parameters: 
-- `scale`, the characteristic scale of variations of $f$, set to $1$ by default.
-- `max_deg`, the order of the Taylor series used, which should be set by the user according to the regularity of the function under consideration and the feasibility of computing high-order derivatives (computed automatically using `TaylorSeries.jl` [@TaylorSeries.jl] and `Arblib.jl` [@Arblib.jl], where the latter is faster in calculating much larger orders and supports some special functions from `SpecialFunctions.jl` [@SpecialFunctions.jl]). By default, set to a large value.
-- `sep`, the initial separation distance, set to ${\rm 0.1*scale}$ by default following [@DaviesHigham03;@HighamMohy10].
-- `ε`, the target accuracy, set to machine accuracy by default.
+* ${\rm scale}$, the characteristic scale of variations of $f$, set to $1$ by default.
+* ${\rm max}\_{\rm deg}$, the order of the Taylor series used, which should be set by the user according to the regularity of the function under consideration and the feasibility of computing high-order derivatives (computed automatically using `TaylorSeries.jl` [@TaylorSeries.jl] and `Arblib.jl` [@Arblib.jl], where the latter is faster in calculating much larger orders and supports some special functions from `SpecialFunctions.jl` [@SpecialFunctions.jl]). By default, set to a large value.
+* ${\rm sep}$, the initial separation distance, set to ${\rm 0.1*scale}$ by default following [@DaviesHigham03;@HighamMohy10].
+* $\varepsilon$, the target accuracy, set to machine accuracy by default.
 
-In the case where Julia natively supports the computation of $f(A)$ (as determined by trying to compute `f(ones(1,1))` and catching any resulting error), we use them instead of Taylor series to compute diagonal blocks. In the error estimate, we consider ${\rm max\_deg}=\infty$, and therefore use a partition with maximal diameter `scale`. We partition the eigenvalues rather than simply call the native $f(A)$, because $f$ can still have sharp variations, which would cause inaccuracies in $f(A)$. For example:
+In the case where Julia natively supports the computation of $f(A)$ (as determined by trying to compute `f(ones(1,1))` and catching any resulting error), we use them instead of Taylor series to compute diagonal blocks. In the error estimate, we consider ${\rm max\_deg}=\infty$, and therefore use a partition with maximal diameter ${\rm scale}$. We partition the eigenvalues rather than simply call the native $f(A)$, because $f$ can still have sharp variations, which would cause inaccuracies in $f(A)$. For example:
 ```julia
 f(x) = I/(I+exp(50*x));
 
@@ -106,20 +106,20 @@ using MatrixFuns
 
 A = [-0.1 1.0 0.0; 0.0 -0.05 1.0; 0.0 0.0 0.01];
 
-mat_fun(exp, A) # returns the matrix function exp(A)
+mat_fun(exp, A) # returns exp(A)
 3×3 Matrix{Float64}:
  0.904837  0.92784   0.477323
  0.0       0.951229  0.980346
  0.0       0.0       1.01005
 
-div_diff(exp, -0.1, -0.05, 0.01) # returns the second-order divided difference exp[-0.1,-0.05,0.01]
+div_diff(exp, -0.1, -0.05, 0.01) # returns exp[-0.1,-0.05,0.01]
 0.47732345844677654
 
 H = 0.5 * (A + A'); # generates a Hermitian matrix
 
 hs = map(i -> i * H, [1, 2]);
 
-mat_fun_frechet(exp, H, hs) # returns the second-order Fréchet derivative d^2exp(H)hs[1]hs[2]
+mat_fun_frechet(exp, H, hs) # returns d^2exp(H)hs[1]hs[2]
 3×3 Matrix{Float64}:
  0.519468  0.347941  0.55445
  0.347941  1.10871   0.46992
