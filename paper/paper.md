@@ -71,21 +71,19 @@ For discontinuous functions, or functions with sharp variations, our algorithm t
 
 ## Fréchet derivatives
 For a Hermitian $A\in\mathbb{C}^{n\times n}$, denote the eigenpairs by $\{(\lambda_i,v_i)\}$. The $N$-th order Fréchet derivative expresses the variation of $f(A)$ with respect to a set of variations $H_1, \dots, H_N$, and is given by (see the documentation of `MatrixFuns.jl` for details)
-```math
-\begin{equation*}
-   	{{\rm d}}^{N}f(A)H_1\cdots H_N =\sum_{i_0,\cdots,i_{N}=1}^nv_{i_0}\Bigg(\sum_{p\in\mathcal{P}_N}(H_{p(1)})_{i_0,i_1}\cdots (H_{p(N)})_{i_{N-1},i_{N}}\Bigg){f[\lambda_{i_0},\cdots,\lambda_{i_{N}}]}v_{i_{N}}^*,
-   \end{equation*}
-```
+$$
+{{\rm d}}^{N}f(A)H_1\cdots H_N =\sum_{i_0,\cdots,i_{N}=1}^nv_{i_0}\Bigg(\sum_{p\in\mathcal{P}_N}(H_{p(1)})_{i_0,i_1}\cdots (H_{p(N)})_{i_{N-1},i_{N}}\Bigg){f[\lambda_{i_0},\cdots,\lambda_{i_{N}}]}v_{i_{N}}^*,
+$$
 where $(H_{p(k)})_{i,j}=v_i^*H_{p(k)}v_j$ and $p\in\mathcal{P}_N$ is an arbitrary permutation of $\{1,\cdots,N\}$. The higher-order divided differences $f[x_0, \dots, x_N]$ defined recursively by
-```math
-    	f[x_0, \dots, x_N]
+$$
+f[x_0, \dots, x_N]
     	= \begin{cases} 
     		(f[x_0,\dots,x_{N-1}]-f[x_1,\dots,x_{N}])/(x_0-x_N), &{\rm if}\,\,x_0\neq x_N,\\ 
     		\frac{\partial}{\partial z}f[z,x_1, \dots,x_{N-1}]{\big|}_{z=x_0}, & {\rm if}\,\,x_0= x_N.
     	\end{cases}
-```
+$$
 The naive evaluation of this recurrence formula is prone to numerical stabilities. Instead, we compute the divided differences using Opitz's formula
-```math
+$$
 f\left(\begin{bmatrix}
     		x_0&1&&\\
     		&x_1&\ddots&\\
@@ -98,7 +96,7 @@ f\left(\begin{bmatrix}
     		&&\ddots &f[x_{N-1},x_N]\\
     		&&&f[x_N]
     	\end{bmatrix}.
-```
+$$
 Therefore, the key point in evaluating the Fréchet derivative reduces to computing matrix functions for upper triangular matrices.
 
 # Examples
