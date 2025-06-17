@@ -26,6 +26,7 @@ bibliography: paper.bib
 The computation of matrix functions (i.e., $f(A)$ for $A$ a $n \times n$ matrix and $f : \mathbb{C} \to \mathbb{C}$) and their Fréchet derivatives plays a crucial role in many fields of science [@Higham2008], and in particular in electronic structure calculations within density functional theory and response calculations. For Hermitian $A$, computing $f(A)$ can be done efficiently and stably by diagonalization. In the non-normal case, however, diagonalization is unstable and alternative schemes have to be used. Even in the Hermitian case, the evaluation of Fréchet derivatives requires (high-order) divided differences, which by Opitz's formula [@deBoor2005] is equivalent to the exact computation of $f(A)$ for non-normal $A$.
 
 In this work, we develop `MatrixFuns.jl` a Julia package [@julia] to provide the robust computation of matrix functions for arbitrary square matrices and higher-order Fréchet derivatives for Hermitian matrices. This package is tailored towards high accuracy with relatively small matrices and relatively complicated functions $f$. Our work is based on the Schur-Parlett algorithm [@DaviesHigham03;@HighamMohy10], with the following modifications:
+
 * It supports functions that are discontinuous, or have sharp variations.
 * It does not require the computation of arbitrary-order derivatives of $f$.
 * It exploits existing special-purpose methods for computing matrix functions (e.g. for functions involving exponentials or logarithms) when they exist.
@@ -42,7 +43,8 @@ Our algorithm attempts to find a partition of the eigenvalues of $A$ (computed u
 
 To find the partition, we start by partitioning the set of eigenvalues $\Lambda$ into disjoint clusters $\Lambda_i$ such that the distance between two such clusters is at least ${\rm sep}$, where ${\rm sep}$ is a user-definable parameter. We then check if the partition is acceptable by estimating the error in all the clusters; if the estimated error is acceptable, we accept the partition; if not, we split the unacceptable clusters further by applying the partitioning algorithm recursively to each unacceptable $\Lambda_i$. We estimate the error in a cluster $\Lambda_i$ of diameter $d_i$ as ${\textrm{err}}_i=(\frac{d_i}{\textrm{scale}})^{\textrm{max}\_\textrm{deg}+1}$. We accept a cluster if $\textrm{err}_i < \varepsilon/\textrm{sep}$. This choice is made to balance the error originating from the Taylor expansion within a cluster $\textrm{err}_i$ with the error incurred by the use of the Parlett recursion $\varepsilon/\textrm{sep}$.
 
-Therefore, our algorithm has the following parameters: 
+Therefore, our algorithm has the following parameters:
+
 * ${\rm scale}$, the characteristic scale of variations of $f$, set to $1$ by default.
 * ${\rm max}\_{\rm deg}$, the order of the Taylor series used, which should be set by the user according to the regularity of the function under consideration and the feasibility of computing high-order derivatives (computed automatically using `TaylorSeries.jl` [@TaylorSeries.jl] and `Arblib.jl` [@Arblib.jl], where the latter is faster in calculating much larger orders and supports some special functions from `SpecialFunctions.jl` [@SpecialFunctions.jl]). By default, set to a large value.
 * ${\rm sep}$, the initial separation distance, set to ${\rm 0.1*scale}$ by default following [@DaviesHigham03;@HighamMohy10].
@@ -67,7 +69,7 @@ mat_fun(f, A; scale=1/50) # Schur-Parlett
  0.0        0.0            0.99593
 ```
 
-For discontinuous functions, or functions with sharp variations, our algorithm takes as input a color mapping ${\textrm{color}}:\mathbb{C}\to\mathbb{Z}, \lambda\mapsto a$, and makes sure that all the eigenvalues inside a cluster have the same color. This ensures that Talor expansions are not used across the discontinuity boundaries.
+For discontinuous functions, or functions with sharp variations, our algorithm takes as input a color mapping ${\textrm{color}}:\mathbb{C}\to\mathbb{Z}, \lambda\mapsto a$, and makes sure that all the eigenvalues inside a cluster have the same color. This ensures that Taylor expansions are not used across the discontinuity boundaries.
 
 ## Fréchet derivatives
 For a Hermitian $A\in\mathbb{C}^{n\times n}$, denote the eigenpairs by $\{(\lambda_i,v_i)\}$. The $N$-th order Fréchet derivative expresses the variation of $f(A)$ with respect to a set of variations $H_1, \dots, H_N$, and is given by (see the documentation of `MatrixFuns.jl` for details)
