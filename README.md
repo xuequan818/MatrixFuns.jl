@@ -100,3 +100,11 @@ julia> using Pkg
 
 julia> Pkg.add("MatrixFuns")
 ```
+
+## Community Guidelines
+
+We welcome contributions and feedback from the community!
+
+* **Contributing**: If you'd like to contribute, please open an issue or submit a pull request.
+* **Reporting Issues**: Please report bugs, unexpected behavior, or suggestions through the [issue tracker](https://github.com/xuequan818/MatrixFuns.jl/issues).
+* **Seeking Support**: For questions or help, feel free to open a discussion or reach out via the issue tracker.
