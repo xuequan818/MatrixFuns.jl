@@ -40,7 +40,10 @@ function atomic_block_fun!(f::Function, F::AbstractMatrix,
     end
 
     ft = taylor_coeffs(f, σ, max_deg)
-    if !isfinite(ft[end])
+    if all(iszero, ft)
+        fill!(F, 0)
+        return F
+    elseif !isfinite(ft[end])
         max_iter = findfirst(!isfinite, ft) - 2
     else
         max_iter = findlast(!iszero, ft) - 1
