@@ -40,5 +40,3 @@ for (f, s) in zip(funcs, scales)
         fd[n] = @benchmarkable mat_fun_frechet($f, $Hi, $hsi; scale=$s)
 	end
 end
-
-results = run(SUITE["Fréchet Derivative"])
