@@ -13,9 +13,9 @@ authors:
    orcid: 0000-0002-3999-0289
    affiliation: 1
 affiliations:
- - name: Laboratoire de Mathématiques d'Orsay, Université Paris-Saclay
+ - name: Laboratoire de Mathématiques d'Orsay, Université Paris-Saclay, France
    index: 1
- - name: School of Mathematical Sciences, Beijing Normal University
+ - name: School of Mathematical Sciences, Beijing Normal University, China
    index: 2
 date: 5 June 2025
 bibliography: paper.bib
@@ -29,17 +29,17 @@ In this work, we develop `MatrixFuns.jl` a Julia package [@julia] to provide the
 
 * It supports functions that are discontinuous, or have sharp variations.
 * It does not require the computation of arbitrary-order derivatives of $f$.
-* It exploits existing special-purpose methods for computing matrix functions (e.g. for functions involving exponentials or logarithms) when they exist.
+* It exploits existing special-purpose methods for computing matrix functions (e.g., for functions involving exponentials or logarithms) when they exist.
 
 
 # Statement of need
-`MatrixFuns.jl` aims to provide high-accuracy computations for general matrix functions and arbitrary-order Fréchet derivatives (including divided differences) in Julia. Julia provides some native matrix functions, but the choice is limited to a few functions for which special-purpose algorithms exist (e.g., exponentials, logarithms, matrix powers...). There are no dedicated functions in Julia for computing Fréchet derivatives and divided differences; some Julia packages offer tools for their computation (e.g., `ChainRules.jl` [@ChainRules.jl], `DFTK.jl` [@DFTKjcon]...), but are typically limited to first order.
+`MatrixFuns.jl` aims to provide high-accuracy computations for general matrix functions and arbitrary-order Fréchet derivatives (including divided differences) in Julia. Julia provides some native matrix functions, but the choice is limited to a few functions for which special-purpose algorithms exist (e.g., exponentials, logarithms, matrix powers). There are no dedicated functions in Julia for computing Fréchet derivatives and divided differences; some Julia packages offer tools for their computation (e.g., `ChainRules.jl` [@ChainRules.jl], `DFTK.jl` [@DFTKjcon]), but are typically limited to first order.
 
 # Methods
 ## Matrix functions
-The basic principle of the Schur-Parlett algorithm is as follows. First, one performs a Schur decomposition to reduce to the case of an upper triangular matrix. Then, one uses the Parlett recursion, which for a block matrix $A = \begin{pmatrix}A_{11}&A_{12}\\0&A_{22}\end{pmatrix}$ expresses $B = f(A)$ as $B_{11}=f(A_{11})$, $B_{22}=f(A_{22})$ and $B_{12}$ given by the solution of the Sylvester equation $A_{11} B_{12} - B_{12} A_{22} = B_{11}A_{12}-A_{12}B_{22}$. In principle, this can be used to compute $f(A)$ by a recursion, but the Sylvester equation becomes ill-conditioned when $A_{11}$ and $A_{22}$ do not have well-separated eigenvalues. In this case, one can use Taylor series, as proposed in [@DaviesHigham03;@HighamMohy10], but this has the disadvantage of requiring arbitrarily many derivatives of $f$, which might be impractical in some applications (e.g. when the function is not analytic, or has sharp variations).
+The basic principle of the Schur-Parlett algorithm is as follows. First, one performs a Schur decomposition to reduce to the case of an upper triangular matrix. Then, one uses the Parlett recursion, which for a block matrix $A = \begin{pmatrix}A_{11}&A_{12}\\0&A_{22}\end{pmatrix}$ expresses $B = f(A)$ as $B_{11}=f(A_{11})$, $B_{22}=f(A_{22})$ and $B_{12}$ given by the solution of the Sylvester equation $A_{11} B_{12} - B_{12} A_{22} = B_{11}A_{12}-A_{12}B_{22}$. In principle, this can be used to compute $f(A)$ by a recursion, but the Sylvester equation becomes ill-conditioned when $A_{11}$ and $A_{22}$ do not have well-separated eigenvalues. In this case, one can use Taylor series, as proposed in @DaviesHigham03 and @HighamMohy10, but this has the disadvantage of requiring arbitrarily many derivatives of $f$, which might be impractical in some applications (e.g., when the function is not analytic, or has sharp variations).
 
-Our algorithm attempts to find a partition of the eigenvalues of $A$ (computed using a Schur decomposition) into blocks that are well-separated. The diagonal blocks are then computed using Taylor series, and the Parlett recursion is used to fill out the off-diagonal blocks. The partitioning aims to find small blocks (so that low-order Taylor series can be used) that are well-separated (so that the Parlett recursion is well-conditioned)
+Our algorithm attempts to find a partition of the eigenvalues of $A$ (computed using a Schur decomposition) into blocks that are well-separated. The diagonal blocks are then computed using Taylor series, and the Parlett recursion is used to fill out the off-diagonal blocks. The partitioning aims to find small blocks (so that low-order Taylor series can be used) that are well-separated (so that the Parlett recursion is well-conditioned).
 
 To find the partition, we start by partitioning the set of eigenvalues $\Lambda$ into disjoint clusters $\Lambda_i$ such that the distance between two such clusters is at least ${\rm sep}$, where ${\rm sep}$ is a user-definable parameter. We then check if the partition is acceptable by estimating the error in all the clusters; if the estimated error is acceptable, we accept the partition; if not, we split the unacceptable clusters further by applying the partitioning algorithm recursively to each unacceptable $\Lambda_i$. We estimate the error in a cluster $\Lambda_i$ of diameter $d_i$ as ${\textrm{err}}_i=(\frac{d_i}{\textrm{scale}})^{\textrm{max}\_\textrm{deg}+1}$. We accept a cluster if $\textrm{err}_i < \varepsilon/\textrm{sep}$. This choice is made to balance the error originating from the Taylor expansion within a cluster $\textrm{err}_i$ with the error incurred by the use of the Parlett recursion $\varepsilon/\textrm{sep}$.
 
@@ -155,3 +155,4 @@ mat_fun(sign, A; color=x->Int(sign(x))) # discontinuous function with smooth bra
 ```
 
 # Reference
+
