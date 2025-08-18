@@ -113,14 +113,3 @@ function native(f::Function)
         false
     end
 end
-
-#=
-# matrix functions in Julia
-for mf in (:exp, :log, :cis, :sqrt, 
-           :sin, :cos, :tan, :csc, :sec, :cot, 
-           :sinh, :cosh, :tanh, :csch, :sech, :coth,
-           :asin, :acos, :atan, :acsc, :asec, :acot,
-           :asinh, :acosh, :atanh, :acsch, :asech, :acoth)
-    @eval @inline mat_fun(f::typeof($mf), A::AbstractMatrix{<:Number}; kwargs...) = f(A)
-end
-=#
