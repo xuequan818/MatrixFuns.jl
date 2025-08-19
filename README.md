@@ -2,6 +2,8 @@
 [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://xuequan818.github.io/MatrixFuns.jl/dev/)
 [![Build Status](https://github.com/xuequan818/MatrixFuns.jl/actions/workflows/CI.yml/badge.svg?branch=master)](https://github.com/xuequan818/MatrixFuns.jl/actions/workflows/CI.yml?query=branch%3Amain)
 [![Coverage](https://codecov.io/gh/xuequan818/MatrixFuns.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/xuequan818/MatrixFuns.jl)
+[![status](https://joss.theoj.org/papers/b01f684942b4ec09eb48b9aa7f7efb80/status.svg)](https://joss.theoj.org/papers/b01f684942b4ec09eb48b9aa7f7efb80)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.16899270.svg)](https://doi.org/10.5281/zenodo.16899270)
 
 # MatrixFuns.jl
 A Julia package for computing scalar functions of matrix variables and their Fréchet derivatives. The matrix functions computation (for arbitrary square matrices) is based on the [Schur-Parlett algorithm](https://doi.org/10.1137/S0895479802410815) (with improvements). The higher order Fréchet derivatives (for Hermitian matrices) are formulated similarly to the [Daleckii-Krein theorem](https://www.ams.org/books/trans2/047/), where the [divided differences](https://en.wikipedia.org/wiki/Divided_differences) are calculated accurately by the [Opitz' formula](https://www.emis.de/journals/SAT/papers/2/). In particular, `MatrixFuns` supports the computation of discontinuous functions. 
@@ -108,3 +110,21 @@ We welcome contributions and feedback from the community!
 * **Contributing**: If you'd like to contribute, please open an issue or submit a pull request.
 * **Reporting Issues**: Please report bugs, unexpected behavior, or suggestions through the [issue tracker](https://github.com/xuequan818/MatrixFuns.jl/issues).
 * **Seeking Support**: For questions or help, feel free to open a discussion or reach out via the issue tracker.
+
+
+## Citation
+
+```bibtex
+@article{MatrixFuns, 
+  doi = {10.21105/joss.08396}, 
+  url = {https://doi.org/10.21105/joss.08396}, 
+  year = {2025}, 
+  publisher = {The Open Journal}, 
+  volume = {10}, 
+  number = {112}, 
+  pages = {8396}, 
+  author = {Quan, Xue and Levitt, Antoine}, 
+  title = {MatrixFuns.jl: Matrix functions in Julia},
+  journal = {Journal of Open Source Software} 
+  }
+```
