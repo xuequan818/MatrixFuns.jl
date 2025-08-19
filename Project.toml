@@ -1,7 +1,7 @@
 name = "MatrixFuns"
 uuid = "de0a5e7d-9ed9-4b51-b397-e23faa31cb8d"
 authors = ["Xue Quan and Antoine Levitt"]
-version = "1.0.2"
+version = "1.0.3"
 
 [deps]
 Arblib = "fb37089c-8514-4489-9461-98f9c8763369"
