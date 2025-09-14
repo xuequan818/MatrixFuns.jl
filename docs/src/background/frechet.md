@@ -114,19 +114,19 @@ and permute such that the $0$-dimension is at the end $\mathfrak{F}^{2,…,N,0}$
 and $F_N = (\mathfrak{F}^{N,0})^T$.
 
 ## Adjoint
-Denote the first order Fréchet derivative by $\dot{F}= U(\Lambda^{0,1} ∘ U^* \dot{H} U) U^*$, by
+Denote the first order Fréchet derivative by $\dot{F}= U(\Lambda^{0,1} ∘ U^* \dot{A} U) U^*$, by
 ```math 
 \begin{align*}
-  {\rm Re}\langle\overline{F},\dot{F}\rangle&={\rm Re}\langle\overline{F}, U(\Lambda^{0,1} ∘ U^* \dot{H} U) U^*\rangle\\
-    &={\rm Re}\langle U^*\overline{F} U,\Lambda^{0,1} ∘ U^* \dot{H} U\rangle\\
-    &={\rm Re}\langle U^*\overline{F} U ∘(\Lambda^{0,1})^*,  U^* \dot{H} U\rangle\\
-    &={\rm Re}\langle U( U^*\overline{F} U ∘(\Lambda^{0,1})^*) U^*, \dot{H}\rangle\\
-    &={\rm Re}\langle\overline{H},\dot{H}\rangle,
+  {\rm Re}\langle\overline{F},\dot{F}\rangle&={\rm Re}\langle\overline{F}, U(\Lambda^{0,1} ∘ U^* \dot{A} U) U^*\rangle\\
+    &={\rm Re}\langle U^*\overline{F} U,\Lambda^{0,1} ∘ U^* \dot{A} U\rangle\\
+    &={\rm Re}\langle U^*\overline{F} U ∘(\Lambda^{0,1})^*,  U^* \dot{A} U\rangle\\
+    &={\rm Re}\langle U( U^*\overline{F} U ∘(\Lambda^{0,1})^*) U^*, \dot{A}\rangle\\
+    &={\rm Re}\langle\overline{A},\dot{A}\rangle,
 \end{align*}
 ```
 we have the adjoint 
 ```math
-\overline{H} =  U( U^*\overline{F} U ∘(\Lambda^{0,1})^*) U^*.
+\overline{A} =  U( U^*\overline{F} U ∘(\Lambda^{0,1})^*) U^*.
 ```
 
 
